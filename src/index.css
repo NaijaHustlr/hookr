@@ -123,10 +123,12 @@
   .snap-container {
     @apply snap-y snap-mandatory overflow-y-auto h-[calc(100vh-4rem)];
     scroll-padding-top: 1rem;
+    scroll-snap-type: y mandatory;
   }
   
   .snap-item {
     @apply snap-start h-auto min-h-[calc(100vh-6rem)] w-full;
+    scroll-snap-align: start;
   }
   
   .navigation-icon {

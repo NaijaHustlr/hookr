@@ -1,4 +1,3 @@
-
 import { ModelType } from "@/types/model";
 
 // Generate availability for the model
@@ -35,7 +34,8 @@ const getRandomDistance = () => {
 
 // Generate mock models
 export const generateMockModels = (count: number): ModelType[] => {
-  return Array.from({ length: count }).map((_, index) => {
+  console.log(`Generating ${count} mock models`);
+  const models = Array.from({ length: count }).map((_, index) => {
     // Use placeholder images
     const imgId = (index % 5) + 1;
     const imgUrl = `/images/model-${imgId}.jpg`;
@@ -55,6 +55,8 @@ export const generateMockModels = (count: number): ModelType[] => {
       featured: Math.random() > 0.7,
     };
   });
+  console.log("Generated models:", models);
+  return models;
 };
 
 // Generate different categories of models

@@ -15,7 +15,9 @@ const BrowsePage: React.FC = () => {
     // Simulate API call
     setLoading(true);
     setTimeout(() => {
-      setModels(generateMockModels(10));
+      const generatedModels = generateMockModels(10);
+      console.log("Generated models:", generatedModels);
+      setModels(generatedModels);
       setLoading(false);
     }, 500);
   }, []);
@@ -43,8 +45,12 @@ const BrowsePage: React.FC = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="animate-pulse-slow text-hookr-accent">Loading...</div>
         </div>
+      ) : models.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-hookr-light">No models found</div>
+        </div>
       ) : (
-        <div className="snap-container pb-16">
+        <div className="snap-container flex flex-col gap-4 pb-16">
           {models.map((model) => (
             <div key={model.id} className="px-4 py-3">
               <ModelCard model={model} />

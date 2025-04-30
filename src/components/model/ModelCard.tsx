@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ModelAvailability from "./ModelAvailability";
@@ -11,14 +11,28 @@ interface ModelCardProps {
 }
 
 const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
+  const [imageError, setImageError] = useState(false);
+
+  const handleImageError = () => {
+    console.error(`Failed to load image for model: ${model.name}`);
+    setImageError(true);
+  };
+
   return (
     <div className="snap-item relative rounded-2xl overflow-hidden shadow-lg bg-hookr-muted">
-      <div className="relative h-full w-full">
-        <img 
-          src={model.profileImage} 
-          alt={model.name} 
-          className="w-full h-full object-cover object-center"
-        />
+      <div className="relative h-full min-h-[80vh] w-full">
+        {imageError ? (
+          <div className="w-full h-full bg-hookr-muted flex items-center justify-center">
+            <p className="text-hookr-light text-lg">Image unavailable</p>
+          </div>
+        ) : (
+          <img 
+            src={model.profileImage} 
+            alt={model.name} 
+            className="w-full h-full object-cover object-center"
+            onError={handleImageError}
+          />
+        )}
         <div className="gradient-overlay"></div>
         
         <div className="card-content">
@@ -28,7 +42,7 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
               <div className="flex items-center">
                 <Star className="w-4 h-4 text-hookr-accent mr-1 fill-hookr-accent" />
                 <span className="text-sm font-medium text-white">
-                  {model.rating} ({model.reviewCount})
+                  {model.rating.toFixed(1)} ({model.reviewCount})
                 </span>
                 <span className="mx-2 text-white">•</span>
                 <span className="text-sm text-white">{model.distance} away</span>
