@@ -1,0 +1,69 @@
+
+import React from "react";
+import { Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ModelAvailability from "./ModelAvailability";
+import ModelTags from "./ModelTags";
+import { ModelType } from "@/types/model";
+
+interface ModelCardProps {
+  model: ModelType;
+}
+
+const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
+  return (
+    <div className="snap-item relative rounded-2xl overflow-hidden shadow-lg bg-hookr-muted">
+      <div className="relative h-full w-full">
+        <img 
+          src={model.profileImage} 
+          alt={model.name} 
+          className="w-full h-full object-cover object-center"
+        />
+        <div className="gradient-overlay"></div>
+        
+        <div className="card-content">
+          <div className="flex justify-between items-start mb-2">
+            <div>
+              <h2 className="text-2xl font-bold text-white">{model.name}</h2>
+              <div className="flex items-center">
+                <Star className="w-4 h-4 text-hookr-accent mr-1 fill-hookr-accent" />
+                <span className="text-sm font-medium text-white">
+                  {model.rating} ({model.reviewCount})
+                </span>
+                <span className="mx-2 text-white">•</span>
+                <span className="text-sm text-white">{model.distance} away</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xl font-bold text-hookr-accent">${model.price}</p>
+              <p className="text-xs text-white opacity-80">per hour</p>
+            </div>
+          </div>
+          
+          <ModelTags tags={model.tags} />
+          
+          <div className="mt-3">
+            <ModelAvailability availability={model.availability} />
+          </div>
+          
+          <div className="mt-4 flex justify-between items-center">
+            <Button 
+              variant="outline"
+              size="sm"
+              className="rounded-full border-hookr-light text-hookr-light px-4 hover:bg-hookr-light hover:bg-opacity-10"
+            >
+              View Profile
+            </Button>
+            <Button 
+              className="book-now-btn"
+            >
+              Book Now
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ModelCard;
