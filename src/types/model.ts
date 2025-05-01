@@ -4,6 +4,27 @@ export interface ModelAvailabilityDay {
   available: boolean;
 }
 
+export interface ChatMessage {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  timestamp: Date;
+  read: boolean;
+}
+
+export interface Post {
+  id: string;
+  modelId: string;
+  content: string;
+  mediaUrl: string;
+  mediaType: 'image' | 'video';
+  likes: number;
+  comments: number;
+  timestamp: Date;
+  isPremium: boolean;
+}
+
 export interface ModelType {
   id: string;
   name: string;
@@ -18,4 +39,6 @@ export interface ModelType {
   age: number;
   verified: boolean;
   featured: boolean;
+  isCreator?: boolean;
+  posts?: Post[];
 }

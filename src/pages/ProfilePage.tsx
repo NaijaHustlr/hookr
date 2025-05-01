@@ -1,11 +1,25 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, LogOut } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const ProfilePage: React.FC = () => {
+  const [isCreator, setIsCreator] = useState(false);
+  const [showCreatorDialog, setShowCreatorDialog] = useState(false);
+  
+  const handleBecomeCreator = () => {
+    setShowCreatorDialog(true);
+  };
+  
+  const handleApplySubmit = () => {
+    setShowCreatorDialog(false);
+    // In a real app, this would submit the application
+    setIsCreator(true); // For demo purposes, immediately approve
+  };
+  
   return (
     <div className="flex flex-col min-h-screen pb-16">
       <header className="sticky top-0 z-30 bg-hookr-dark bg-opacity-95 backdrop-blur-sm px-4 py-3">
@@ -31,9 +45,21 @@ const ProfilePage: React.FC = () => {
               <Button variant="outline" size="sm" className="bg-hookr-muted border-hookr-light border-opacity-20 text-hookr-light">
                 Edit Profile
               </Button>
-              <Button variant="outline" size="sm" className="bg-hookr-muted border-hookr-accent text-hookr-accent">
-                Upgrade
-              </Button>
+              {!isCreator && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="bg-hookr-muted border-hookr-accent text-hookr-accent"
+                  onClick={handleBecomeCreator}
+                >
+                  Become a Hookr
+                </Button>
+              )}
+              {isCreator && (
+                <Button variant="outline" size="sm" className="bg-hookr-accent text-white border-hookr-accent">
+                  Creator Account
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -50,7 +76,7 @@ const ProfilePage: React.FC = () => {
               <div className="bg-hookr-muted p-4 rounded-lg">
                 <div className="text-center py-10 text-hookr-light opacity-70">
                   <p>No bookings yet</p>
-                  <Button className="book-now-btn mt-4">Browse Models</Button>
+                  <Button className="mt-4 bg-hookr-accent text-white">Browse Models</Button>
                 </div>
               </div>
             </TabsContent>
@@ -59,7 +85,7 @@ const ProfilePage: React.FC = () => {
               <div className="bg-hookr-muted p-4 rounded-lg">
                 <div className="text-center py-10 text-hookr-light opacity-70">
                   <p>No favorites yet</p>
-                  <Button className="book-now-btn mt-4">Browse Models</Button>
+                  <Button className="mt-4 bg-hookr-accent text-white">Browse Models</Button>
                 </div>
               </div>
             </TabsContent>
@@ -84,6 +110,47 @@ const ProfilePage: React.FC = () => {
           </Button>
         </div>
       </div>
+      
+      {/* Become a Creator Dialog */}
+      <Dialog open={showCreatorDialog} onOpenChange={setShowCreatorDialog}>
+        <DialogContent className="bg-hookr-dark border-hookr-light border-opacity-20 text-hookr-light">
+          <DialogHeader>
+            <DialogTitle className="text-hookr-light">Become a Hookr Creator</DialogTitle>
+            <DialogDescription className="text-hookr-light text-opacity-70">
+              Join our exclusive network of premium models.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="bg-hookr-muted p-3 rounded-lg">
+              <h3 className="font-medium mb-2">Our Platform Standards</h3>
+              <ul className="list-disc pl-5 text-sm space-y-2 text-hookr-light text-opacity-80">
+                <li>Professional quality photos and videos</li>
+                <li>Verified identity and background checks</li>
+                <li>Strict adherence to platform guidelines</li>
+                <li>Reliable scheduling and communication</li>
+                <li>Consistent client satisfaction</li>
+              </ul>
+            </div>
+            
+            <div className="bg-hookr-muted p-3 rounded-lg">
+              <h3 className="font-medium mb-2">Benefits</h3>
+              <ul className="list-disc pl-5 text-sm space-y-2 text-hookr-light text-opacity-80">
+                <li>Premium visibility on the platform</li>
+                <li>Higher booking rates and income potential</li>
+                <li>Content monetization options</li>
+                <li>Priority customer support</li>
+                <li>Exclusive creator community access</li>
+              </ul>
+            </div>
+            
+            <div className="flex justify-end gap-3 mt-4">
+              <Button variant="ghost" onClick={() => setShowCreatorDialog(false)}>Cancel</Button>
+              <Button className="bg-hookr-accent text-white" onClick={handleApplySubmit}>Apply Now</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

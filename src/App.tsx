@@ -7,9 +7,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import BrowsePage from "./pages/BrowsePage";
 import ExplorePage from "./pages/ExplorePage";
+import FeedPage from "./pages/FeedPage"; 
 import ProfilePage from "./pages/ProfilePage";
 import FavoritesPage from "./pages/FavoritesPage";
 import NotFound from "./pages/NotFound";
+import ChatButton from "./components/chat/ChatButton";
 
 const queryClient = new QueryClient();
 
@@ -23,10 +25,12 @@ const App = () => (
           <Routes>
             <Route path="/" element={<BrowsePage />} />
             <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/feed" element={<FeedPage />} />
             <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <ChatButton />
         </AppLayout>
       </BrowserRouter>
     </TooltipProvider>
