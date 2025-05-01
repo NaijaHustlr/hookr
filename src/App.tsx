@@ -9,6 +9,7 @@ import BrowsePage from "./pages/BrowsePage";
 import ExplorePage from "./pages/ExplorePage";
 import FeedPage from "./pages/FeedPage"; 
 import ProfilePage from "./pages/ProfilePage";
+import CreatorProfilePage from "./pages/CreatorProfilePage";
 import FavoritesPage from "./pages/FavoritesPage";
 import NotFound from "./pages/NotFound";
 import ChatButton from "./components/chat/ChatButton";
@@ -31,6 +32,7 @@ function App() {
               <Route path="/feed" element={<FeedPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:id" element={<CreatorProfilePage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <ChatButton />

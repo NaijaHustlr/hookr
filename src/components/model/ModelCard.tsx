@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import ModelAvailability from "./ModelAvailability";
 import ModelTags from "./ModelTags";
 import { ModelType } from "@/types/model";
+import { Link } from "react-router-dom";
 
 interface ModelCardProps {
   model: ModelType;
@@ -62,13 +63,15 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
           </div>
           
           <div className="mt-4 flex justify-between items-center">
-            <Button 
-              variant="outline"
-              size="sm"
-              className="rounded-full border-hookr-light text-hookr-light px-4 hover:bg-hookr-light hover:bg-opacity-10"
-            >
-              View Profile
-            </Button>
+            <Link to={`/profile/${model.id}`}>
+              <Button 
+                variant="outline"
+                size="sm"
+                className="rounded-full border-hookr-light text-hookr-light px-4 hover:bg-hookr-light hover:bg-opacity-10"
+              >
+                View Profile
+              </Button>
+            </Link>
             <Button 
               className="bg-hookr-accent text-hookr-light font-semibold px-4 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-200"
             >
