@@ -14,7 +14,7 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
   const [imageError, setImageError] = useState(false);
 
   const handleImageError = () => {
-    console.error(`Failed to load image for model: ${model.name}`);
+    console.error(`Failed to load image for model: ${model.name}, path: ${model.profileImage}`);
     setImageError(true);
   };
 

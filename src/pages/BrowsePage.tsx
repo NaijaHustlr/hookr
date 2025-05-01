@@ -18,6 +18,9 @@ const BrowsePage: React.FC = () => {
       const generatedModels = generateMockModels(10);
       setModels(generatedModels);
       setLoading(false);
+      
+      // Log to help debugging
+      console.log("Loaded models with images:", generatedModels.map(m => m.profileImage));
     }, 300);
   }, []);
 

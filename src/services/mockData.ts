@@ -43,15 +43,34 @@ const modelNames = [
 // Generate mock models
 export const generateMockModels = (count: number): ModelType[] => {
   console.log(`Generating ${count} mock models`);
+  
+  // List of available uploaded images
+  // Using relative paths to the lovable-uploads directory
+  const modelImages = [
+    "/lovable-uploads/image-1.jpg",
+    "/lovable-uploads/image-2.jpg",
+    "/lovable-uploads/image-3.jpg",
+    "/lovable-uploads/image-4.jpg",
+    "/lovable-uploads/image-5.jpg",
+    "/lovable-uploads/image-6.jpg",
+    "/lovable-uploads/image-7.jpg",
+    "/lovable-uploads/image-8.jpg",
+    "/lovable-uploads/image-9.jpg",
+    "/lovable-uploads/image-10.jpg"
+  ];
+  
+  const fallbackImage = "/placeholder.svg"; // Using the existing placeholder as fallback
+  
   const models = Array.from({ length: count }).map((_, index) => {
-    // Use all 10 available images, cycling through them if count > 10
-    const imgId = (index % 10) + 1;
-    const imgUrl = `/images/model-${imgId}.jpg`;
+    // Use the available images, cycling through them if count > number of images
+    const imgIndex = index % modelImages.length;
+    const imgUrl = modelImages[imgIndex];
     
     return {
       id: `model-${index + 1}`,
       name: modelNames[index % modelNames.length],
       profileImage: imgUrl,
+      fallbackImage: fallbackImage,
       rating: (Math.random() * 1) + 4, // Rating between 4 and 5
       reviewCount: Math.floor(Math.random() * 100) + 5,
       distance: getRandomDistance(),
