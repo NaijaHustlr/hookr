@@ -12,14 +12,13 @@ const BrowsePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate API call
+    // Load exactly 10 models to match our 10 images
     setLoading(true);
     setTimeout(() => {
       const generatedModels = generateMockModels(10);
-      console.log("Generated models:", generatedModels);
       setModels(generatedModels);
       setLoading(false);
-    }, 500);
+    }, 300);
   }, []);
 
   const handleFilterChange = (filters: Record<string, string>) => {
@@ -43,16 +42,16 @@ const BrowsePage: React.FC = () => {
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
-          <div className="animate-pulse-slow text-hookr-accent">Loading...</div>
+          <div className="animate-pulse text-hookr-accent">Loading models...</div>
         </div>
       ) : models.length === 0 ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-hookr-light">No models found</div>
         </div>
       ) : (
-        <div className="snap-container flex flex-col gap-4 pb-16">
+        <div className="snap-y snap-mandatory overflow-y-auto h-[calc(100vh-4rem)] scroll-pt-4">
           {models.map((model) => (
-            <div key={model.id} className="px-4 py-3">
+            <div key={model.id} className="snap-start min-h-[calc(100vh-5rem)] p-4">
               <ModelCard model={model} />
             </div>
           ))}

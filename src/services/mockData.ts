@@ -1,3 +1,4 @@
+
 import { ModelType } from "@/types/model";
 
 // Generate availability for the model
@@ -32,17 +33,24 @@ const getRandomDistance = () => {
   return `${distance} mi`;
 };
 
+// Model names pool
+const modelNames = [
+  'Sophia', 'Victoria', 'Isabella', 'Olivia', 'Ava', 
+  'Emma', 'Mia', 'Luna', 'Aria', 'Zoe', 'Charlotte',
+  'Amelia', 'Harper', 'Evelyn', 'Abigail'
+];
+
 // Generate mock models
 export const generateMockModels = (count: number): ModelType[] => {
   console.log(`Generating ${count} mock models`);
   const models = Array.from({ length: count }).map((_, index) => {
-    // Use placeholder images
-    const imgId = (index % 5) + 1;
+    // Use all 10 available images, cycling through them if count > 10
+    const imgId = (index % 10) + 1;
     const imgUrl = `/images/model-${imgId}.jpg`;
     
     return {
       id: `model-${index + 1}`,
-      name: ['Sophia', 'Victoria', 'Isabella', 'Olivia', 'Ava', 'Emma', 'Mia', 'Luna', 'Aria', 'Zoe'][index % 10],
+      name: modelNames[index % modelNames.length],
       profileImage: imgUrl,
       rating: (Math.random() * 1) + 4, // Rating between 4 and 5
       reviewCount: Math.floor(Math.random() * 100) + 5,

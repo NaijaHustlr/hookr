@@ -28,14 +28,15 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
         ) : (
           <img 
             src={model.profileImage} 
-            alt={model.name} 
+            alt={`${model.name} - Model`} 
             className="w-full h-full object-cover object-center"
             onError={handleImageError}
+            loading="lazy"
           />
         )}
-        <div className="gradient-overlay"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
         
-        <div className="card-content">
+        <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
           <div className="flex justify-between items-start mb-2">
             <div>
               <h2 className="text-2xl font-bold text-white">{model.name}</h2>
@@ -69,7 +70,7 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
               View Profile
             </Button>
             <Button 
-              className="book-now-btn"
+              className="bg-hookr-accent text-hookr-light font-semibold px-4 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-200"
             >
               Book Now
             </Button>
