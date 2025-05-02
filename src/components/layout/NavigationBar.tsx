@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Search, Heart, User, Plus } from "lucide-react";
@@ -26,11 +25,6 @@ const NavigationBar: React.FC = () => {
       label: "Browse",
       icon: Home,
       path: "/",
-    },
-    {
-      label: "Explore",
-      icon: Search,
-      path: "/explore",
     },
     {
       label: "Create",

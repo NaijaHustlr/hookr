@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "./components/layout/AppLayout";
 import BrowsePage from "./pages/BrowsePage";
-import ExplorePage from "./pages/ExplorePage";
 import FeedPage from "./pages/FeedPage"; 
 import ProfilePage from "./pages/ProfilePage";
 import CreatorProfilePage from "./pages/CreatorProfilePage";
@@ -28,7 +27,6 @@ function App() {
           <AppLayout>
             <Routes>
               <Route path="/" element={<BrowsePage />} />
-              <Route path="/explore" element={<ExplorePage />} />
               <Route path="/feed" element={<FeedPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
