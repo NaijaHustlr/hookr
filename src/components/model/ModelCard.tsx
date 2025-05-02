@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,35 +5,22 @@ import ModelAvailability from "./ModelAvailability";
 import ModelTags from "./ModelTags";
 import { ModelType } from "@/types/model";
 import { Link } from "react-router-dom";
-
 interface ModelCardProps {
   model: ModelType;
 }
-
-const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
+const ModelCard: React.FC<ModelCardProps> = ({
+  model
+}) => {
   const [imageError, setImageError] = useState(false);
-
   const handleImageError = () => {
     console.error(`Failed to load image for model: ${model.name}, path: ${model.profileImage}`);
     setImageError(true);
   };
-
-  return (
-    <div className="snap-item relative rounded-2xl overflow-hidden shadow-lg bg-hookr-muted">
+  return <div className="snap-item relative rounded-2xl overflow-hidden shadow-lg bg-hookr-muted">
       <div className="relative h-full min-h-[80vh] w-full">
-        {imageError ? (
-          <div className="w-full h-full bg-hookr-muted flex items-center justify-center">
+        {imageError ? <div className="w-full h-full bg-hookr-muted flex items-center justify-center">
             <p className="text-hookr-light text-lg">Image unavailable</p>
-          </div>
-        ) : (
-          <img 
-            src={model.profileImage} 
-            alt={`${model.name} - Model`} 
-            className="w-full h-full object-cover object-center"
-            onError={handleImageError}
-            loading="lazy"
-          />
-        )}
+          </div> : <img src={model.profileImage} alt={`${model.name} - Model`} className="w-full h-full object-cover object-center" onError={handleImageError} loading="lazy" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none"></div>
         
         <div className="absolute bottom-0 left-0 right-0 p-4 z-20">
@@ -64,24 +50,16 @@ const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
           
           <div className="mt-4 flex justify-between items-center">
             <Link to={`/profile/${model.id}`}>
-              <Button 
-                variant="outline"
-                size="sm"
-                className="rounded-full border-hookr-light text-hookr-light px-4 hover:bg-hookr-light hover:bg-opacity-10"
-              >
+              <Button variant="outline" size="sm" className="rounded-full border-hookr-light px-4 hover:bg-opacity-10 bg-slate-50 text-base text-zinc-950">
                 View Profile
               </Button>
             </Link>
-            <Button 
-              className="bg-hookr-accent text-hookr-light font-semibold px-4 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-200"
-            >
+            <Button className="bg-hookr-accent text-hookr-light font-semibold px-4 py-2 rounded-full hover:bg-opacity-90 transition-colors duration-200">
               Book Now
             </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ModelCard;
