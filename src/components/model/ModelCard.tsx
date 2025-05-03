@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,17 +6,21 @@ import ModelAvailability from "./ModelAvailability";
 import ModelTags from "./ModelTags";
 import { ModelType } from "@/types/model";
 import { Link } from "react-router-dom";
+
 interface ModelCardProps {
   model: ModelType;
 }
+
 const ModelCard: React.FC<ModelCardProps> = ({
   model
 }) => {
   const [imageError, setImageError] = useState(false);
+  
   const handleImageError = () => {
     console.error(`Failed to load image for model: ${model.name}, path: ${model.profileImage}`);
     setImageError(true);
   };
+  
   return <div className="snap-item relative rounded-2xl overflow-hidden shadow-lg bg-hookr-muted">
       <div className="relative h-full min-h-[80vh] w-full">
         {imageError ? <div className="w-full h-full bg-hookr-muted flex items-center justify-center">
@@ -50,7 +55,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
           
           <div className="mt-4 flex justify-between items-center">
             <Link to={`/profile/${model.id}`}>
-              <Button variant="outline" size="sm" className="rounded-full border-hookr-light px-4 hover:bg-opacity-10 bg-slate-50 text-base text-zinc-950">
+              <Button variant="outline" size="sm" className="rounded-full border-hookr-light px-4 hover:bg-opacity-10 bg-slate-50 text-zinc-950">
                 View Profile
               </Button>
             </Link>
@@ -62,4 +67,5 @@ const ModelCard: React.FC<ModelCardProps> = ({
       </div>
     </div>;
 };
+
 export default ModelCard;
