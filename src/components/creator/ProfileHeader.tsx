@@ -1,24 +1,27 @@
 
 import React, { useState } from "react";
 import { Shield, Star, DollarSign } from "lucide-react";
-// Fix the imports to use default imports
 import ModelAvailability from "@/components/model/ModelAvailability";
 import ModelTags from "@/components/model/ModelTags";
 import { Button } from "@/components/ui/button";
-import { Calendar, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { ModelType } from "@/types/model";
 import { Badge } from "@/components/ui/badge";
 
 interface ProfileHeaderProps {
-  model: ModelType;
-  onBookNow: () => void;
-  onSubscribe: () => void;
+  creator: ModelType;
+  isSubscribed: boolean;
+  handleBookNow: () => void;
+  handleUnlockContent?: () => void;
+  setShowSubscriptionModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({ 
-  model, 
-  onBookNow,
-  onSubscribe 
+  creator, 
+  isSubscribed,
+  handleBookNow,
+  handleUnlockContent,
+  setShowSubscriptionModal
 }) => {
   const [showMore, setShowMore] = useState(false);
   
@@ -30,10 +33,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     <div className="relative">
       {/* Cover Photo */}
       <div className="h-40 bg-gradient-to-r from-hookr-accent/30 to-hookr-accent/10 overflow-hidden">
-        {model.fallbackImage && (
+        {creator.fallbackImage && (
           <img 
-            src={model.fallbackImage} 
-            alt={`${model.name}'s cover`}
+            src={creator.fallbackImage} 
+            alt={`${creator.name}'s cover`}
             className="w-full h-full object-cover opacity-60"
           />
         )}
@@ -46,22 +49,22 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <div className="z-10">
             <div className="w-28 h-28 rounded-full border-4 border-hookr-dark overflow-hidden">
               <img 
-                src={model.profileImage} 
-                alt={model.name} 
+                src={creator.profileImage} 
+                alt={creator.name} 
                 className="w-full h-full object-cover"
               />
             </div>
           </div>
           
           <div className="flex gap-2">
-            <Button onClick={onBookNow} className="book-now-btn">
+            <Button onClick={handleBookNow} className="book-now-btn">
               Book Now
             </Button>
             
             <Button 
               variant="outline" 
               className="text-hookr-light bg-hookr-muted border-hookr-light/20"
-              onClick={onSubscribe}
+              onClick={() => setShowSubscriptionModal(true)}
             >
               <Lock className="mr-1 h-4 w-4" /> 
               Subscribe
@@ -72,11 +75,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         {/* Name & Basic Info */}
         <div className="mb-3">
           <div className="flex items-center">
-            <h2 className="text-xl font-bold text-hookr-light mr-2">{model.name}</h2>
-            {model.verified && (
+            <h2 className="text-xl font-bold text-hookr-light mr-2">{creator.name}</h2>
+            {creator.verified && (
               <Shield className="h-4 w-4 text-hookr-accent" fill="currentColor" />
             )}
-            {model.featured && (
+            {creator.featured && (
               <Badge variant="outline" className="ml-2 text-xs border-hookr-accent text-hookr-accent">
                 Featured
               </Badge>
@@ -84,18 +87,18 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
           
           <div className="flex items-center mt-1 text-sm text-hookr-light/70">
-            <span>{model.age} years</span>
+            <span>{creator.age} years</span>
             <span className="mx-2">•</span>
-            <span>{model.distance}</span>
+            <span>{creator.distance}</span>
           </div>
           
           <div className="mt-1 flex items-center">
             <div className="flex items-center">
               <Star className="h-4 w-4 text-yellow-500 fill-current" />
-              <span className="ml-1 text-sm">{model.rating}</span>
+              <span className="ml-1 text-sm">{creator.rating}</span>
             </div>
             <span className="mx-2 text-xs text-hookr-light/50">|</span>
-            <span className="text-xs text-hookr-light/70">{model.reviewCount} reviews</span>
+            <span className="text-xs text-hookr-light/70">{creator.reviewCount} reviews</span>
           </div>
         </div>
         
@@ -116,7 +119,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         
         {/* Tags */}
         <div className="mb-4">
-          <ModelTags tags={model.tags} />
+          <ModelTags tags={creator.tags} />
         </div>
         
         {/* Price */}
@@ -125,12 +128,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <p className="text-sm text-hookr-light/70">Starting from</p>
             <div className="flex items-center">
               <DollarSign className="h-4 w-4 text-hookr-light" />
-              <span className="text-xl font-bold text-hookr-light">{model.price}</span>
+              <span className="text-xl font-bold text-hookr-light">{creator.price}</span>
               <span className="text-sm text-hookr-light/70 ml-1">/ hr</span>
             </div>
           </div>
           
-          <ModelAvailability availability={model.availability} />
+          <ModelAvailability availability={creator.availability} />
         </div>
       </div>
     </div>
