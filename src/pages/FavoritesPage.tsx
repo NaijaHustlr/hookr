@@ -1,14 +1,11 @@
-
 import React from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 const FavoritesPage: React.FC = () => {
-  return (
-    <div className="flex flex-col min-h-screen pb-16">
+  return <div className="flex flex-col min-h-screen pb-16">
       <header className="sticky top-0 z-30 bg-hookr-dark bg-opacity-95 backdrop-blur-sm px-4 py-3">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-hookr-light">Favorites</h1>
+          <h1 className="text-2xl font-serif italic font-hookr-light">Favorites</h1>
         </div>
       </header>
       
@@ -26,8 +23,6 @@ const FavoritesPage: React.FC = () => {
           </Button>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default FavoritesPage;
