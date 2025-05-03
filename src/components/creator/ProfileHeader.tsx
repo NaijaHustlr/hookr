@@ -1,129 +1,139 @@
 
-import React from "react";
-import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Shield, Star } from "lucide-react";
-import { ModelAvailability } from "@/components/model/ModelAvailability";
-import { ModelTags } from "@/components/model/ModelTags";
+import React, { useState } from "react";
+import { Shield, Star, DollarSign } from "lucide-react";
+// Fix the imports to use default imports
+import ModelAvailability from "@/components/model/ModelAvailability";
+import ModelTags from "@/components/model/ModelTags";
 import { Button } from "@/components/ui/button";
 import { Calendar, Lock } from "lucide-react";
 import { ModelType } from "@/types/model";
+import { Badge } from "@/components/ui/badge";
 
 interface ProfileHeaderProps {
-  creator: ModelType;
-  isSubscribed: boolean;
-  handleBookNow: () => void;
-  handleUnlockContent: () => void;
-  setShowSubscriptionModal: (show: boolean) => void;
+  model: ModelType;
+  onBookNow: () => void;
+  onSubscribe: () => void;
 }
 
-const ProfileHeader: React.FC<ProfileHeaderProps> = ({
-  creator,
-  isSubscribed,
-  handleBookNow,
-  handleUnlockContent,
-  setShowSubscriptionModal
+const ProfileHeader: React.FC<ProfileHeaderProps> = ({ 
+  model, 
+  onBookNow,
+  onSubscribe 
 }) => {
-  // Determine subscription button text based on subscription status
-  const subscribeButtonText = isSubscribed ? "Subscribed ✓" : "Subscribe";
-
+  const [showMore, setShowMore] = useState(false);
+  
+  const bioText = "Hi there! I'm a passionate and professional model offering premium companionship services. I love creating memorable experiences and connecting with amazing people. Let's make some magic happen!";
+  
+  const displayBio = showMore ? bioText : bioText.substring(0, 100) + (bioText.length > 100 ? "..." : "");
+  
   return (
-    <>
-      {/* Hero section with profile image */}
-      <div className="relative h-60 md:h-80">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-hookr-dark z-10"></div>
-        <img 
-          src={creator.profileImage} 
-          alt={creator.name} 
-          className="w-full h-full object-cover" 
-          onError={e => {
-            const target = e.target as HTMLImageElement;
-            if (creator.fallbackImage) {
-              target.src = creator.fallbackImage;
-            }
-          }} 
-        />
+    <div className="relative">
+      {/* Cover Photo */}
+      <div className="h-40 bg-gradient-to-r from-hookr-accent/30 to-hookr-accent/10 overflow-hidden">
+        {model.fallbackImage && (
+          <img 
+            src={model.fallbackImage} 
+            alt={`${model.name}'s cover`}
+            className="w-full h-full object-cover opacity-60"
+          />
+        )}
       </div>
-
-      {/* Profile info section */}
-      <div className="px-4 -mt-16 relative z-20">
-        <div className="flex items-end mb-4">
-          <Avatar className="h-24 w-24 border-4 border-hookr-dark">
-            <img src={creator.profileImage} alt={creator.name} className="object-cover" />
-          </Avatar>
-          <div className="ml-4 mb-2">
-            <div className="flex items-center">
-              <h2 className="text-2xl font-bold text-hookr-light">
-                {creator.name}
-              </h2>
-              {creator.verified && <Badge className="ml-2 bg-hookr-accent">
-                  <Shield className="h-3 w-3 mr-1" />
-                  Verified
-                </Badge>}
-              {isSubscribed && <Badge className="ml-2 bg-green-500 text-white">
-                  Subscribed
-                </Badge>}
+      
+      {/* Profile Info */}
+      <div className="px-4 pt-0 pb-4 relative">
+        {/* Profile Image */}
+        <div className="relative -mt-16 mb-4 flex justify-between items-end">
+          <div className="z-10">
+            <div className="w-28 h-28 rounded-full border-4 border-hookr-dark overflow-hidden">
+              <img 
+                src={model.profileImage} 
+                alt={model.name} 
+                className="w-full h-full object-cover"
+              />
             </div>
-            <p className="text-hookr-light text-opacity-70">
-              Age: {creator.age} • {creator.distance} away
-            </p>
+          </div>
+          
+          <div className="flex gap-2">
+            <Button onClick={onBookNow} className="book-now-btn">
+              Book Now
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="text-hookr-light bg-hookr-muted border-hookr-light/20"
+              onClick={onSubscribe}
+            >
+              <Lock className="mr-1 h-4 w-4" /> 
+              Subscribe
+            </Button>
           </div>
         </div>
-
-        <div className="flex items-center mb-4">
+        
+        {/* Name & Basic Info */}
+        <div className="mb-3">
           <div className="flex items-center">
-            <Star className="w-4 h-4 text-hookr-accent mr-1 fill-hookr-accent" />
-            <span className="text-sm font-medium text-hookr-light">
-              {creator.rating.toFixed(1)} ({creator.reviewCount})
-            </span>
+            <h2 className="text-xl font-bold text-hookr-light mr-2">{model.name}</h2>
+            {model.verified && (
+              <Shield className="h-4 w-4 text-hookr-accent" fill="currentColor" />
+            )}
+            {model.featured && (
+              <Badge variant="outline" className="ml-2 text-xs border-hookr-accent text-hookr-accent">
+                Featured
+              </Badge>
+            )}
           </div>
-          <div className="ml-auto">
-            <p className="text-xl font-bold text-hookr-accent">
-              ${creator.price}
-              <span className="text-xs text-hookr-light opacity-80 ml-1">
-                per hour
-              </span>
-            </p>
+          
+          <div className="flex items-center mt-1 text-sm text-hookr-light/70">
+            <span>{model.age} years</span>
+            <span className="mx-2">•</span>
+            <span>{model.distance}</span>
+          </div>
+          
+          <div className="mt-1 flex items-center">
+            <div className="flex items-center">
+              <Star className="h-4 w-4 text-yellow-500 fill-current" />
+              <span className="ml-1 text-sm">{model.rating}</span>
+            </div>
+            <span className="mx-2 text-xs text-hookr-light/50">|</span>
+            <span className="text-xs text-hookr-light/70">{model.reviewCount} reviews</span>
           </div>
         </div>
-
-        <div className="mb-6">
-          <ModelTags tags={creator.tags} />
+        
+        {/* Bio */}
+        <div className="mb-4">
+          <p className="text-sm text-hookr-light/90">
+            {displayBio}
+            {bioText.length > 100 && (
+              <button 
+                className="ml-1 text-hookr-accent font-medium"
+                onClick={() => setShowMore(!showMore)}
+              >
+                {showMore ? "Show less" : "Show more"}
+              </button>
+            )}
+          </p>
         </div>
-
-        <div className="mb-6">
-          <h3 className="text-hookr-light mb-2 font-medium">Availability</h3>
-          <ModelAvailability availability={creator.availability} />
+        
+        {/* Tags */}
+        <div className="mb-4">
+          <ModelTags tags={model.tags} />
         </div>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          <Button className="bg-hookr-accent text-hookr-light font-semibold flex-1 rounded-full hover:bg-opacity-90 transition-colors duration-200" onClick={handleBookNow}>
-            <Calendar className="w-4 h-4 mr-2" />
-            Book Now
-          </Button>
+        
+        {/* Price */}
+        <div className="bg-hookr-muted/70 rounded-lg p-3 flex justify-between items-center">
+          <div>
+            <p className="text-sm text-hookr-light/70">Starting from</p>
+            <div className="flex items-center">
+              <DollarSign className="h-4 w-4 text-hookr-light" />
+              <span className="text-xl font-bold text-hookr-light">{model.price}</span>
+              <span className="text-sm text-hookr-light/70 ml-1">/ hr</span>
+            </div>
+          </div>
           
-          <Button 
-            variant="outline" 
-            className={`border-hookr-accent text-hookr-accent flex-1 rounded-full hover:bg-hookr-accent hover:bg-opacity-10 ${isSubscribed ? 'bg-hookr-accent bg-opacity-10' : ''}`} 
-            onClick={handleUnlockContent}
-          >
-            <Lock className="w-4 h-4 mr-2" />
-            Unlock All Content
-          </Button>
-          
-          <Button 
-            variant={isSubscribed ? "outline" : "default"}
-            className={`flex-1 rounded-full ${isSubscribed 
-              ? 'border-green-500 text-green-500 hover:bg-green-500 hover:bg-opacity-10' 
-              : 'bg-green-500 text-white hover:bg-green-600'}`} 
-            onClick={() => setShowSubscriptionModal(true)}
-          >
-            <DollarSign className="h-4 w-4 mr-2" />
-            {subscribeButtonText}
-          </Button>
+          <ModelAvailability availability={model.availability} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
