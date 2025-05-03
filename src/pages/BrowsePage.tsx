@@ -139,7 +139,7 @@ const BrowsePage: React.FC = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-serif italic font-hookr-light">hookr</h1>
           <div className="flex gap-3">
-            <Button variant="outline" size="icon" className="rounded-full bg-transparent border-hookr-light border-opacity-20">
+            <Button variant="outline" size="icon" className="rounded-full bg-transparent hookr-opacity-20">
               <Bell className="h-5 w-5 text-hookr-light" />
             </Button>
             <FilterDropdown filters={filterOptions} onFilterChange={handleFilterChange} />
