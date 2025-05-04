@@ -1,6 +1,7 @@
+
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Search, Heart, User, Plus } from "lucide-react";
+import { Home, Search, MessageSquare, User, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -22,9 +23,14 @@ const NavigationBar: React.FC = () => {
   
   const navItems = [
     {
-      label: "Browse",
+      label: "Home",
       icon: Home,
       path: "/",
+    },
+    {
+      label: "Search",
+      icon: Search,
+      path: "/feed",
     },
     {
       label: "Create",
@@ -35,14 +41,9 @@ const NavigationBar: React.FC = () => {
       hide: !isCreator && location.pathname !== "/profile", // Only show if user is creator or on profile page
     },
     {
-      label: "Feed",
-      icon: Search, // Using Search icon temporarily
-      path: "/feed",
-    },
-    {
-      label: "Favorites",
-      icon: Heart,
-      path: "/favorites",
+      label: "Messages",
+      icon: MessageSquare,
+      path: "/chat",
     },
     {
       label: "Profile",
@@ -68,8 +69,7 @@ const NavigationBar: React.FC = () => {
                   : "text-hookr-light text-opacity-70 hover:text-hookr-accent"
               )}
             >
-              <item.icon className="w-6 h-6 mb-1" />
-              <span className="text-xs font-medium">{item.label}</span>
+              <item.icon className="w-6 h-6" />
             </Link>
           ))}
         </div>

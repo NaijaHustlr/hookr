@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Bell, SlidersHorizontal, Star, MapPin, CheckCircle, Clock } from "lucide-react";
+import { Bell, SlidersHorizontal, Star, MapPin, CheckCircle, Clock, Heart } from "lucide-react";
 import ModelCard from "@/components/model/ModelCard";
 import FilterDropdown from "@/components/filters/FilterDropdown";
 import { generateMockModels, filterOptions, getFeaturedModels, getNewModels, getTopRatedModels } from "@/services/mockData";
@@ -139,7 +139,20 @@ const BrowsePage: React.FC = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-serif italic font-hookr-light">hookr</h1>
           <div className="flex gap-3">
-            <Button variant="outline" size="icon" className="relative text-hookr-light">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-hookr-light"
+              onClick={() => navigate('/favorites')}
+            >
+              <Heart className="h-5 w-5 text-hookr-light" />
+            </Button>
+            <Button 
+              variant="ghost"
+              size="icon"
+              className="relative text-hookr-light"
+              onClick={() => navigate('/notifications')}
+            >
               <Bell className="h-5 w-5 text-hookr-light" />
             </Button>
             <FilterDropdown filters={filterOptions} onFilterChange={handleFilterChange} />

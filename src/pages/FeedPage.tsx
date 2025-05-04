@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Heart, MessageSquare, Save, Search, ArrowUpRight, Bell, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +8,8 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carouse
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { VerticalVideo } from "@/components/feed/VerticalVideo";
+
 interface StoryProps {
   model: ModelType;
   hasNewStory?: boolean;
@@ -25,6 +27,7 @@ const Story: React.FC<StoryProps> = ({
       <span className="text-xs text-hookr-light truncate w-full text-center">{model.name}</span>
     </div>;
 };
+
 interface FeedPostProps {
   post: Post;
   model: ModelType;
@@ -128,8 +131,12 @@ const FeedPost: React.FC<FeedPostProps> = ({
       </div>
     </Card>;
 };
+
 const FeedPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("feed");
+  const [verticalMode, setVerticalMode] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const navigate = useNavigate();
 
   // Mock data for models
   const mockModels: ModelType[] = [{
@@ -317,17 +324,73 @@ const FeedPage: React.FC = () => {
     isPremium: false
   }];
 
-  // Get model data for each post
-  const getModelForPost = (post: Post): ModelType => {
-    return mockModels.find(model => model.id === post.modelId) || mockModels[0];
+  // Mock video posts for the vertical feed
+  const videoPosts = [
+    {
+      id: 'video-1',
+      modelId: 'model-1',
+      content: 'Check out my new workout routine! 💪',
+      mediaUrl: '/lovable-uploads/video-1.mp4',
+      mediaType: 'video',
+      likes: 245,
+      comments: 57,
+      timestamp: new Date(Date.now() - 3600000),
+      isPremium: false
+    },
+    {
+      id: 'video-2',
+      modelId: 'model-2',
+      content: 'Beach day vibes ☀️🏖️',
+      mediaUrl: '/lovable-uploads/video-2.mp4',
+      mediaType: 'video',
+      likes: 189,
+      comments: 42,
+      timestamp: new Date(Date.now() - 7200000),
+      isPremium: false
+    },
+    {
+      id: 'video-3',
+      modelId: 'model-3',
+      content: 'Behind the scenes of my latest photoshoot',
+      mediaUrl: '/lovable-uploads/video-3.mp4',
+      mediaType: 'video',
+      likes: 312,
+      comments: 76,
+      timestamp: new Date(Date.now() - 10800000),
+      isPremium: true
+    }
+  ];
+
+  const handleVideoEnd = () => {
+    // Go to next video when current one ends
+    if (currentVideoIndex < videoPosts.length - 1) {
+      setCurrentVideoIndex(currentVideoIndex + 1);
+    } else {
+      setCurrentVideoIndex(0); // Loop back to first video
+    }
   };
+
+  const handleBackToGrid = () => {
+    setVerticalMode(false);
+  };
+
+  const handleOpenVerticalMode = (index: number = 0) => {
+    setCurrentVideoIndex(index);
+    setVerticalMode(true);
+  };
+
   return <div className="flex flex-col min-h-screen pb-16 bg-hookr-dark">
       {/* Header Bar */}
       <header className="sticky top-0 z-30 bg-hookr-dark border-b border-hookr-muted/20 px-4 py-3 flex justify-between items-center">
         <h1 className="text-hookr-light font-serif italic font-bold text-2xl">hookr</h1>
         
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="relative text-hookr-light">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative text-hookr-light"
+            onClick={() => navigate('/notifications')}
+          >
             <Bell className="h-5 w-5" />
             <span className="absolute -top-1 -right-1 h-4 w-4 bg-hookr-accent rounded-full text-[10px] text-white flex items-center justify-center">
               3
@@ -340,49 +403,130 @@ const FeedPage: React.FC = () => {
         </div>
       </header>
       
-      {/* Stories Row */}
-      <div className="px-4 py-3 border-b border-hookr-muted/20">
-        <Carousel className="w-full">
-          <CarouselContent className="-ml-2">
-            {mockModels.map(model => <CarouselItem key={model.id} className="pl-2 basis-auto">
-                <Story model={model} hasNewStory={model.featured} />
-              </CarouselItem>)}
-          </CarouselContent>
-        </Carousel>
-      </div>
-      
-      {/* Main Feed */}
-      <Tabs defaultValue="feed" className="w-full" onValueChange={setActiveTab}>
-        <div className="px-4 sticky top-[3.6rem] z-20 bg-hookr-dark/95 backdrop-blur-sm pt-2 pb-1 border-b border-hookr-muted/20">
-          <TabsList className="grid grid-cols-2 bg-hookr-muted/30 w-full">
-            <TabsTrigger value="feed" className="text-hookr-light data-[state=active]:bg-hookr-accent/10 data-[state=active]:text-hookr-accent">
-              For You
-            </TabsTrigger>
-            <TabsTrigger value="subscribed" className="text-hookr-light data-[state=active]:bg-hookr-accent/10 data-[state=active]:text-hookr-accent">
-              Following
-            </TabsTrigger>
-          </TabsList>
+      {verticalMode ? (
+        <div className="fixed inset-0 bg-black z-40">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute top-3 left-3 z-50 text-white"
+            onClick={handleBackToGrid}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="m15 18-6-6 6-6" />
+            </svg>
+          </Button>
+          
+          <VerticalVideo 
+            post={videoPosts[currentVideoIndex]} 
+            model={getModelForPost(videoPosts[currentVideoIndex])}
+            onVideoEnd={handleVideoEnd}
+            currentIndex={currentVideoIndex}
+            totalVideos={videoPosts.length}
+          />
         </div>
-        
-        <TabsContent value="feed" className="mt-2 px-4 pb-4">
-          {mockPosts.map(post => <FeedPost key={post.id} post={post} model={getModelForPost(post)} />)}
-        </TabsContent>
-        
-        <TabsContent value="subscribed" className="mt-2">
-          {activeTab === "subscribed" && <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-hookr-muted/30 flex items-center justify-center mb-4">
-                <Heart className="h-8 w-8 text-hookr-light/30" />
+      ) : (
+        <>
+          {/* Stories Row */}
+          <div className="px-4 py-3 border-b border-hookr-muted/20">
+            <Carousel className="w-full">
+              <CarouselContent className="-ml-2">
+                {mockModels.map(model => <CarouselItem key={model.id} className="pl-2 basis-auto">
+                    <Story model={model} hasNewStory={model.featured} />
+                  </CarouselItem>)}
+              </CarouselContent>
+            </Carousel>
+          </div>
+          
+          {/* Main Feed */}
+          <Tabs defaultValue="feed" className="w-full" onValueChange={setActiveTab}>
+            <div className="px-4 sticky top-[3.6rem] z-20 bg-hookr-dark/95 backdrop-blur-sm pt-2 pb-1 border-b border-hookr-muted/20">
+              <TabsList className="grid grid-cols-3 bg-hookr-muted/30 w-full">
+                <TabsTrigger value="feed" className="text-hookr-light data-[state=active]:bg-hookr-accent/10 data-[state=active]:text-hookr-accent">
+                  For You
+                </TabsTrigger>
+                <TabsTrigger value="videos" className="text-hookr-light data-[state=active]:bg-hookr-accent/10 data-[state=active]:text-hookr-accent">
+                  Videos
+                </TabsTrigger>
+                <TabsTrigger value="subscribed" className="text-hookr-light data-[state=active]:bg-hookr-accent/10 data-[state=active]:text-hookr-accent">
+                  Following
+                </TabsTrigger>
+              </TabsList>
+            </div>
+            
+            <TabsContent value="feed" className="mt-2 px-4 pb-4">
+              {mockPosts.map(post => <FeedPost key={post.id} post={post} model={getModelForPost(post)} />)}
+            </TabsContent>
+            
+            <TabsContent value="videos" className="mt-2 px-4 pb-4">
+              <div className="grid grid-cols-2 gap-3">
+                {videoPosts.map((post, index) => (
+                  <div 
+                    key={post.id}
+                    className="aspect-[9/16] relative rounded-lg overflow-hidden"
+                    onClick={() => handleOpenVerticalMode(index)}
+                  >
+                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="24" height="24" 
+                        viewBox="0 0 24 24" 
+                        fill="white" 
+                        stroke="white" 
+                        strokeWidth="2" 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round"
+                        className="opacity-80"
+                      >
+                        <polygon points="5 3 19 12 5 21 5 3" />
+                      </svg>
+                    </div>
+                    <img 
+                      src={getModelForPost(post).profileImage} 
+                      alt={post.content}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                      <div className="flex items-center">
+                        <Avatar className="h-6 w-6">
+                          <img 
+                            src={getModelForPost(post).profileImage} 
+                            alt={getModelForPost(post).name}
+                            className="object-cover"
+                          />
+                        </Avatar>
+                        <span className="ml-1 text-white text-xs truncate">{getModelForPost(post).name}</span>
+                      </div>
+                    </div>
+                    {post.isPremium && (
+                      <div className="absolute top-2 right-2">
+                        <Badge variant="outline" className="bg-hookr-accent/50 border-hookr-accent text-white text-[10px]">
+                          <Lock className="h-3 w-3 mr-1" />
+                          Premium
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-              <h3 className="text-hookr-light text-lg font-medium mb-2">No subscriptions yet</h3>
-              <p className="text-hookr-light/60 text-sm mb-6">
-                Subscribe to models to see their exclusive content here
-              </p>
-              <Button className="bg-hookr-accent text-white hover:bg-hookr-accent/90" onClick={() => setActiveTab("feed")}>
-                Discover Models
-              </Button>
-            </div>}
-        </TabsContent>
-      </Tabs>
+            </TabsContent>
+            
+            <TabsContent value="subscribed" className="mt-2">
+              {activeTab === "subscribed" && <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
+                  <div className="w-16 h-16 rounded-full bg-hookr-muted/30 flex items-center justify-center mb-4">
+                    <Heart className="h-8 w-8 text-hookr-light/30" />
+                  </div>
+                  <h3 className="text-hookr-light text-lg font-medium mb-2">No subscriptions yet</h3>
+                  <p className="text-hookr-light/60 text-sm mb-6">
+                    Subscribe to models to see their exclusive content here
+                  </p>
+                  <Button className="bg-hookr-accent text-white hover:bg-hookr-accent/90" onClick={() => setActiveTab("feed")}>
+                    Discover Models
+                  </Button>
+                </div>}
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
     </div>;
 };
 export default FeedPage;

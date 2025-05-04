@@ -10,8 +10,9 @@ import FeedPage from "./pages/FeedPage";
 import ProfilePage from "./pages/ProfilePage";
 import CreatorProfilePage from "./pages/CreatorProfilePage";
 import FavoritesPage from "./pages/FavoritesPage";
+import ChatPage from "./pages/ChatPage";
+import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
-import ChatButton from "./components/chat/ChatButton";
 import { useState } from "react";
 
 function App() {
@@ -31,9 +32,10 @@ function App() {
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/profile/:id" element={<CreatorProfilePage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <ChatButton />
           </AppLayout>
         </BrowserRouter>
       </TooltipProvider>

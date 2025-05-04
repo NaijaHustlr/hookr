@@ -57,13 +57,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           </div>
           
           <div className="flex gap-2">
-            <Button onClick={handleBookNow} className="book-now-btn">
+            <Button 
+              onClick={handleBookNow} 
+              className="rounded-full bg-hookr-accent text-white hover:bg-hookr-accent/90 px-5"
+            >
               Book Now
             </Button>
             
             <Button 
               variant="outline" 
-              className="text-hookr-light bg-hookr-muted border-hookr-light/20"
+              className="rounded-full text-hookr-light bg-hookr-muted/70 border-hookr-accent hover:bg-hookr-accent/10 hover:text-hookr-accent"
               onClick={() => setShowSubscriptionModal(true)}
             >
               <Lock className="mr-1 h-4 w-4" /> 

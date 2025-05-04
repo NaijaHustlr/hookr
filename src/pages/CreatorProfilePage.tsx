@@ -1,10 +1,11 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Post } from "@/types/model";
 import { useCreatorData, subscriptionTiers, mockReviews } from "@/hooks/useCreatorData";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 // Import refactored components
 import ProfileHeader from "@/components/creator/ProfileHeader";
@@ -29,9 +30,23 @@ const CreatorProfilePage: React.FC = () => {
   const [likedPosts, setLikedPosts] = useState<string[]>([]);
   const [savedPosts, setSavedPosts] = useState<string[]>([]);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [loadAttempts, setLoadAttempts] = useState(0);
 
-  // Fetch creator data
-  const { data: creator, isLoading } = useCreatorData(id);
+  // Fetch creator data with retry mechanism
+  const { data: creator, isLoading, refetch } = useCreatorData(id);
+
+  // Retry loading if profile not found
+  useEffect(() => {
+    if (!isLoading && !creator && loadAttempts < 3) {
+      const timer = setTimeout(() => {
+        console.log("Retrying profile data fetch, attempt:", loadAttempts + 1);
+        refetch();
+        setLoadAttempts(prev => prev + 1);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, creator, loadAttempts, refetch]);
 
   // Handlers
   const handleBookNow = () => {
@@ -109,16 +124,35 @@ const CreatorProfilePage: React.FC = () => {
 
   if (isLoading) {
     return <div className="min-h-screen bg-hookr-dark flex justify-center items-center">
-        <div className="animate-pulse text-hookr-light">Loading profile...</div>
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 text-hookr-accent animate-spin" />
+          <div className="text-hookr-light">Loading profile...</div>
+        </div>
       </div>;
   }
 
-  if (!creator) {
+  // After multiple attempts, if creator is still not found
+  if (!creator && loadAttempts >= 3) {
     return <div className="min-h-screen bg-hookr-dark flex flex-col justify-center items-center p-4">
         <h2 className="text-2xl text-hookr-light mb-4">Profile Not Found</h2>
+        <p className="text-hookr-light/70 text-center mb-6">
+          This profile may have been removed or is currently unavailable.
+        </p>
         <Button onClick={handleGoBack} variant="outline" className="text-gray-950">
           Go Back
         </Button>
+      </div>;
+  }
+
+  // Default fallback case
+  if (!creator) {
+    return <div className="min-h-screen bg-hookr-dark flex justify-center items-center">
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-hookr-light/70">Loading profile data...</p>
+          <Button onClick={() => refetch()} className="bg-hookr-accent text-white mt-2">
+            Retry
+          </Button>
+        </div>
       </div>;
   }
 
