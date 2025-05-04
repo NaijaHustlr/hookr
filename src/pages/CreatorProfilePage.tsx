@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Post } from "@/types/model";
 import { useCreatorData, subscriptionTiers, mockReviews } from "@/hooks/useCreatorData";
+import { Button } from "@/components/ui/button";
 
 // Import refactored components
 import ProfileHeader from "@/components/creator/ProfileHeader";
