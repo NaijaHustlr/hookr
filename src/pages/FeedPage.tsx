@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from "react";
 import { Heart, MessageSquare, Save, Search, ArrowUpRight, Bell, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,17 +10,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { VerticalVideo } from "@/components/feed/VerticalVideo";
-
-// Helper function to find model by post modelId
-const getModelForPost = (post: Post): ModelType => {
-  // Find the model that matches the post's modelId
-  const matchingModel = mockModels.find(model => model.id === post.modelId);
-  if (!matchingModel) {
-    // Fallback to first model if no match found
-    return mockModels[0];
-  }
-  return matchingModel;
-};
 
 interface StoryProps {
   model: ModelType;
@@ -371,6 +361,17 @@ const FeedPage: React.FC = () => {
       isPremium: true
     }
   ];
+
+  // Helper function to find model by post modelId - moved here so it has access to mockModels
+  const getModelForPost = (post: Post): ModelType => {
+    // Find the model that matches the post's modelId
+    const matchingModel = mockModels.find(model => model.id === post.modelId);
+    if (!matchingModel) {
+      // Fallback to first model if no match found
+      return mockModels[0];
+    }
+    return matchingModel;
+  };
 
   const handleVideoEnd = () => {
     // Go to next video when current one ends
