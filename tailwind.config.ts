@@ -19,6 +19,9 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'serif': ['Times New Roman', 'Noto Serif SC', 'Mongolian Baiti', 'serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

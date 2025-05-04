@@ -4,21 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, LogOut } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
 const ProfilePage: React.FC = () => {
   const [isCreator, setIsCreator] = useState(false);
   const [showCreatorDialog, setShowCreatorDialog] = useState(false);
+  
   const handleBecomeCreator = () => {
     setShowCreatorDialog(true);
   };
+  
   const handleApplySubmit = () => {
     setShowCreatorDialog(false);
     // In a real app, this would submit the application
     setIsCreator(true); // For demo purposes, immediately approve
   };
+  
   return <div className="flex flex-col min-h-screen pb-16">
       <header className="sticky top-0 z-30 bg-hookr-dark bg-opacity-95 backdrop-blur-sm px-4 py-3">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-serif italic font-hookr-light">Profile</h1>
+          <h1 className="text-2xl font-serif-custom font-hookr-light">Profile</h1>
           <div className="flex gap-2">
             <Button variant="outline" size="icon" className="bg-hookr-muted border-hookr-light border-opacity-10 text-hookr-light">
               <Settings className="h-4 w-4" />
@@ -33,7 +37,7 @@ const ProfilePage: React.FC = () => {
             <img src="/images/model-1.jpg" alt="User" className="object-cover" />
           </Avatar>
           <div>
-            <h2 className="text-xl font-bold text-hookr-light">John Doe</h2>
+            <h2 className="text-xl font-serif-custom font-bold text-hookr-light">John Doe</h2>
             <p className="text-hookr-light text-opacity-70">Premium Member</p>
             <div className="mt-2 flex gap-2">
               <Button variant="outline" size="sm" className="bg-hookr-muted border-hookr-light border-opacity-20 text-hookr-light">
@@ -135,4 +139,5 @@ const ProfilePage: React.FC = () => {
       </Dialog>
     </div>;
 };
+
 export default ProfilePage;

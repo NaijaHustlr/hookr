@@ -140,7 +140,9 @@ const BrowsePage: React.FC = () => {
   return <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-30 bg-hookr-dark bg-opacity-95 backdrop-blur-sm px-4 py-3">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-serif italic font-hookr-light">hookr</h1>
+          <div className="flex items-center">
+            <img src="/lovable-uploads/b04f73b0-d394-4695-84c1-c0ac8672ca3c.png" alt="Hookr Logo" className="h-8" />
+          </div>
           <div className="flex gap-3">
             <Button 
               variant="ghost" 
