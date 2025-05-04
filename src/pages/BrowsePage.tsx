@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useNavigate } from "react-router-dom";
 
 // Small model card component for horizontal scrolling sections
 const ModelCardSmall: React.FC<{
@@ -87,6 +88,8 @@ const BrowsePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [reachedBottom, setReachedBottom] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  
   useEffect(() => {
     // Load models for all tabs
     setLoading(true);

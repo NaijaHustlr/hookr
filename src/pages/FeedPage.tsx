@@ -10,6 +10,17 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { VerticalVideo } from "@/components/feed/VerticalVideo";
 
+// Helper function to find model by post modelId
+const getModelForPost = (post: Post): ModelType => {
+  // Find the model that matches the post's modelId
+  const matchingModel = mockModels.find(model => model.id === post.modelId);
+  if (!matchingModel) {
+    // Fallback to first model if no match found
+    return mockModels[0];
+  }
+  return matchingModel;
+};
+
 interface StoryProps {
   model: ModelType;
   hasNewStory?: boolean;
@@ -325,13 +336,13 @@ const FeedPage: React.FC = () => {
   }];
 
   // Mock video posts for the vertical feed
-  const videoPosts = [
+  const videoPosts: Post[] = [
     {
       id: 'video-1',
       modelId: 'model-1',
       content: 'Check out my new workout routine! 💪',
       mediaUrl: '/lovable-uploads/video-1.mp4',
-      mediaType: 'video',
+      mediaType: 'video' as 'video',
       likes: 245,
       comments: 57,
       timestamp: new Date(Date.now() - 3600000),
@@ -342,7 +353,7 @@ const FeedPage: React.FC = () => {
       modelId: 'model-2',
       content: 'Beach day vibes ☀️🏖️',
       mediaUrl: '/lovable-uploads/video-2.mp4',
-      mediaType: 'video',
+      mediaType: 'video' as 'video',
       likes: 189,
       comments: 42,
       timestamp: new Date(Date.now() - 7200000),
@@ -353,7 +364,7 @@ const FeedPage: React.FC = () => {
       modelId: 'model-3',
       content: 'Behind the scenes of my latest photoshoot',
       mediaUrl: '/lovable-uploads/video-3.mp4',
-      mediaType: 'video',
+      mediaType: 'video' as 'video',
       likes: 312,
       comments: 76,
       timestamp: new Date(Date.now() - 10800000),
