@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +15,18 @@ const AuthPage: React.FC = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        navigate("/");
+      }
+    };
+    
+    checkUser();
+  }, [navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,18 +39,21 @@ const AuthPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Mock login for now - replace with Supabase auth later
-      console.log("Logging in with:", { email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       
-      // Simulate successful login
-      setTimeout(() => {
-        toast.success("Login successful!");
-        navigate("/");
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
+      if (error) {
+        throw error;
+      }
+      
+      toast.success("Login successful!");
+      navigate("/");
+    } catch (error: any) {
       console.error("Login error:", error);
-      toast.error("Login failed. Please check your credentials.");
+      toast.error(error.message || "Login failed. Please check your credentials.");
+    } finally {
       setIsLoading(false);
     }
   };
@@ -58,18 +74,21 @@ const AuthPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      // Mock signup for now - replace with Supabase auth later
-      console.log("Signing up with:", { email, password });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
       
-      // Simulate successful signup
-      setTimeout(() => {
-        toast.success("Account created successfully!");
-        navigate("/");
-        setIsLoading(false);
-      }, 1000);
-    } catch (error) {
+      if (error) {
+        throw error;
+      }
+      
+      toast.success("Account created successfully! Please verify your email.");
+      // We don't navigate here because the user needs to verify their email first
+    } catch (error: any) {
       console.error("Signup error:", error);
-      toast.error("Signup failed. Please try again.");
+      toast.error(error.message || "Signup failed. Please try again.");
+    } finally {
       setIsLoading(false);
     }
   };

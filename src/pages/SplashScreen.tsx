@@ -41,7 +41,7 @@ const SplashScreen: React.FC = () => {
           onClick={handleGetStarted}
           className="w-full bg-black hover:bg-black/80 text-white font-medium rounded-full"
         >
-          wow
+          Get Started
         </Button>
       </div>
     </div>
