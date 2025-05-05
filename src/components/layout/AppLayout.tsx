@@ -1,21 +1,16 @@
 
 import React from "react";
 import NavigationBar from "./NavigationBar";
-import { useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 
-interface AppLayoutProps {
-  children: React.ReactNode;
-  hideNavigation?: boolean;
-}
-
-const AppLayout: React.FC<AppLayoutProps> = ({ children, hideNavigation = false }) => {
+const AppLayout: React.FC = () => {
   const location = useLocation();
-  const showNavigation = !hideNavigation && location.pathname !== "/auth";
+  const showNavigation = !["/splash", "/auth"].includes(location.pathname);
   
   return (
     <div className="flex flex-col min-h-screen bg-hookr-dark">
       <main className="flex-1 pb-[4.5rem]">
-        {children}
+        <Outlet />
       </main>
       {showNavigation && <NavigationBar />}
     </div>
