@@ -78,6 +78,13 @@ const AuthPage: React.FC = () => {
     <div className="flex min-h-screen items-center justify-center bg-hookr-dark p-4">
       <Card className="w-full max-w-md bg-hookr-muted border-hookr-light/20">
         <CardHeader className="text-center">
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/lovable-uploads/04b54a16-2621-4f50-ba1d-f0fb421a844c.png" 
+              alt="Hookr Logo" 
+              className="w-16 h-auto"
+            />
+          </div>
           <CardTitle className="text-2xl font-serif-custom text-hookr-light">Hookr</CardTitle>
           <CardDescription className="text-hookr-light/70">
             Sign in to your account or create a new one

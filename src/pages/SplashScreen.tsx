@@ -18,10 +18,11 @@ const SplashScreen: React.FC = () => {
       <div className="flex flex-col items-center justify-center flex-1">
         {/* Logo */}
         <div className="mb-6">
-          <div className="flex items-center justify-center">
-            <div className="w-12 h-12 border-4 border-black rounded-full mr-[-8px]"></div>
-            <div className="w-12 h-12 border-4 border-black rounded-full ml-[-8px]"></div>
-          </div>
+          <img 
+            src="/lovable-uploads/40953b5d-4ef4-4309-9bb4-d8b68d5584c5.png" 
+            alt="Hookr Logo" 
+            className="w-24 h-auto"
+          />
         </div>
         
         {/* App name */}
