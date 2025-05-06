@@ -1,6 +1,5 @@
 
-import React, { useState, useEffect } from "react";
-import { getFeaturedModels, getNewModels, getTopRatedModels } from "@/services/mockData";
+import React from "react";
 import { ModelType } from "@/types/model";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -12,66 +11,9 @@ import {
   CarouselNext,
   CarouselPrevious
 } from "@/components/ui/carousel";
-
-interface ModelCardSmallProps {
-  model: ModelType;
-}
-
-const ModelCardSmall: React.FC<ModelCardSmallProps> = ({ model }) => {
-  return (
-    <div className="relative flex-shrink-0 w-40 bg-hookr-muted rounded-lg overflow-hidden shadow-md">
-      <div className="relative h-52">
-        <img 
-          src={model.profileImage} 
-          alt={model.name} 
-          className="w-full h-full object-cover object-center"
-        />
-        {model.verified && (
-          <div className="absolute top-2 left-2 bg-hookr-accent rounded-full p-1">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-        )}
-      </div>
-      <div className="p-3">
-        <h3 className="font-semibold text-hookr-light">{model.name}</h3>
-        <div className="flex items-center mt-1">
-          <Star className="w-3 h-3 text-hookr-accent fill-hookr-accent" />
-          <span className="text-xs ml-1 text-hookr-light">{model.rating.toFixed(1)}</span>
-          <span className="text-xs ml-2 text-hookr-light opacity-70">${model.price}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ModelCardRound: React.FC<ModelCardSmallProps> = ({ model }) => {
-  return (
-    <div className="flex flex-col items-center w-28">
-      <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-hookr-accent mb-2">
-        <img 
-          src={model.profileImage} 
-          alt={model.name} 
-          className="w-full h-full object-cover"
-        />
-        {model.verified && (
-          <div className="absolute bottom-0 right-0 bg-hookr-accent rounded-full p-1">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-2 w-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-        )}
-      </div>
-      <h4 className="text-xs font-medium text-hookr-light text-center">{model.name}</h4>
-      <div className="flex items-center mt-1">
-        <Star className="w-2 h-2 text-hookr-accent fill-hookr-accent" />
-        <span className="text-xs ml-1 text-hookr-light opacity-80">{model.rating.toFixed(1)}</span>
-      </div>
-      <span className="text-xs text-hookr-light opacity-70">{model.distance}</span>
-    </div>
-  );
-};
+import { useFeaturedModels, useNewModels, useTopRatedModels, useVerifiedModels, useNearbyModels } from "@/hooks/useModels";
+import ModelCardSmall from "@/components/model/ModelCardSmall";
+import ModelCardRound from "@/components/model/ModelCardRound";
 
 interface CategoryRowProps {
   title: string;
@@ -94,23 +36,16 @@ const CategoryRow: React.FC<CategoryRowProps> = ({ title, models }) => {
 };
 
 const ExplorePage: React.FC = () => {
-  const [featuredModels, setFeaturedModels] = useState<ModelType[]>([]);
-  const [newModels, setNewModels] = useState<ModelType[]>([]);
-  const [topRatedModels, setTopRatedModels] = useState<ModelType[]>([]);
-  const [suggestedModels, setSuggestedModels] = useState<ModelType[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulate API calls
-    setLoading(true);
-    setTimeout(() => {
-      setFeaturedModels(getFeaturedModels(8));
-      setNewModels(getNewModels(8));
-      setTopRatedModels(getTopRatedModels(8));
-      setSuggestedModels(getTopRatedModels(10)); // Using top rated as suggested for now
-      setLoading(false);
-    }, 500);
-  }, []);
+  // Use our real data hooks
+  const { data: featuredModels = [], isLoading: isLoadingFeatured } = useFeaturedModels(8);
+  const { data: newModels = [], isLoading: isLoadingNew } = useNewModels(8);
+  const { data: topRatedModels = [], isLoading: isLoadingTopRated } = useTopRatedModels(8);
+  const { data: suggestedModels = [], isLoading: isLoadingSuggested } = useTopRatedModels(10);
+  const { data: verifiedModels = [], isLoading: isLoadingVerified } = useVerifiedModels(12);
+  const { data: nearbyModels = [], isLoading: isLoadingNearby } = useNearbyModels(12);
+  
+  // Combined loading state
+  const isLoading = isLoadingFeatured || isLoadingNew || isLoadingTopRated || isLoadingSuggested;
 
   return (
     <div className="flex flex-col min-h-screen pb-16">
@@ -134,7 +69,7 @@ const ExplorePage: React.FC = () => {
         </div>
 
         <TabsContent value="all" className="mt-3">
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center h-60">
               <div className="animate-pulse-slow text-hookr-accent">Loading...</div>
             </div>
@@ -148,7 +83,7 @@ const ExplorePage: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="discover" className="mt-3 px-4">
-          {loading ? (
+          {isLoading ? (
             <div className="flex items-center justify-center h-60">
               <div className="animate-pulse-slow text-hookr-accent">Loading...</div>
             </div>
@@ -178,21 +113,57 @@ const ExplorePage: React.FC = () => {
         </TabsContent>
         
         <TabsContent value="verified">
-          <div className="flex items-center justify-center h-60 text-hookr-light opacity-70">
-            Coming soon
-          </div>
+          {isLoadingVerified ? (
+            <div className="flex items-center justify-center h-60">
+              <div className="animate-pulse-slow text-hookr-accent">Loading...</div>
+            </div>
+          ) : verifiedModels.length > 0 ? (
+            <div className="p-4 grid grid-cols-2 gap-4">
+              {verifiedModels.map(model => (
+                <ModelCardSmall key={model.id} model={model} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-60 text-hookr-light opacity-70">
+              No verified models found
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="nearby">
-          <div className="flex items-center justify-center h-60 text-hookr-light opacity-70">
-            Coming soon
-          </div>
+          {isLoadingNearby ? (
+            <div className="flex items-center justify-center h-60">
+              <div className="animate-pulse-slow text-hookr-accent">Loading...</div>
+            </div>
+          ) : nearbyModels.length > 0 ? (
+            <div className="p-4 grid grid-cols-2 gap-4">
+              {nearbyModels.map(model => (
+                <ModelCardSmall key={model.id} model={model} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-60 text-hookr-light opacity-70">
+              No nearby models found
+            </div>
+          )}
         </TabsContent>
         
         <TabsContent value="new">
-          <div className="flex items-center justify-center h-60 text-hookr-light opacity-70">
-            Coming soon
-          </div>
+          {isLoadingNew ? (
+            <div className="flex items-center justify-center h-60">
+              <div className="animate-pulse-slow text-hookr-accent">Loading...</div>
+            </div>
+          ) : newModels.length > 0 ? (
+            <div className="p-4 grid grid-cols-2 gap-4">
+              {newModels.map(model => (
+                <ModelCardSmall key={model.id} model={model} />
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-60 text-hookr-light opacity-70">
+              No new models found
+            </div>
+          )}
         </TabsContent>
       </Tabs>
     </div>

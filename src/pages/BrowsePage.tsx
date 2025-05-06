@@ -1,55 +1,34 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { CheckCircle, MapPin, Clock } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { generateMockModels, filterOptions, getFeaturedModels, getNewModels, getTopRatedModels } from "@/services/mockData";
+import { filterOptions } from "@/services/mockData";
 import { ModelType } from "@/types/model";
 
-// Import our new components
+// Import our components and new hooks
 import BrowseHeader from "@/components/browse/BrowseHeader";
 import AllModelsTab from "@/components/browse/tabs/AllModelsTab";
 import DiscoverTab from "@/components/browse/tabs/DiscoverTab";
 import ModelListTab from "@/components/browse/tabs/ModelListTab";
+import { useModels, useFeaturedModels, useNewModels, useTopRatedModels, useVerifiedModels, useNearbyModels } from "@/hooks/useModels";
 
 const BrowsePage: React.FC = () => {
-  const [models, setModels] = useState<ModelType[]>([]);
-  const [verifiedModels, setVerifiedModels] = useState<ModelType[]>([]);
-  const [nearbyModels, setNearbyModels] = useState<ModelType[]>([]);
-  const [newModels, setNewModels] = useState<ModelType[]>([]);
-  const [suggestedModels, setSuggestedModels] = useState<ModelType[]>([]);
-  const [featuredModels, setFeaturedModels] = useState<ModelType[]>([]);
-  const [topRatedModels, setTopRatedModels] = useState<ModelType[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [appliedFilters, setAppliedFilters] = useState<Record<string, string>>({});
   
-  useEffect(() => {
-    // Load models for all tabs
-    setLoading(true);
-    setTimeout(() => {
-      const allModels = generateMockModels(10);
-      setModels(allModels);
-
-      // Filter verified models
-      setVerifiedModels(allModels.filter(model => model.verified));
-
-      // Sort by distance for nearby models
-      setNearbyModels([...allModels].sort((a, b) => {
-        const distA = parseInt(a.distance.split(' ')[0]);
-        const distB = parseInt(b.distance.split(' ')[0]);
-        return distA - distB;
-      }));
-
-      // Featured and top rated models
-      setFeaturedModels(getFeaturedModels(8));
-      setNewModels(getNewModels(8));
-      setTopRatedModels(getTopRatedModels(8));
-      setSuggestedModels(getTopRatedModels(10));
-      setLoading(false);
-    }, 300);
-  }, []);
-
+  // Use our new hooks to fetch real data
+  const { data: allModels = [], isLoading: isLoadingAll } = useModels();
+  const { data: verifiedModels = [], isLoading: isLoadingVerified } = useVerifiedModels();
+  const { data: nearbyModels = [], isLoading: isLoadingNearby } = useNearbyModels();
+  const { data: newModels = [], isLoading: isLoadingNew } = useNewModels();
+  const { data: featuredModels = [], isLoading: isLoadingFeatured } = useFeaturedModels();
+  const { data: topRatedModels = [], isLoading: isLoadingTopRated } = useTopRatedModels();
+  const { data: suggestedModels = [], isLoading: isLoadingSuggested } = useTopRatedModels(10);
+  
+  // Function to handle filter changes
   const handleFilterChange = (filters: Record<string, string>) => {
     console.log("Applied filters:", filters);
-    // In a real app, this would filter the models based on the selected filters
+    setAppliedFilters(filters);
+    // In a production app, we'd update our queries based on these filters
   };
 
   return (
@@ -81,8 +60,8 @@ const BrowsePage: React.FC = () => {
 
         <TabsContent value="all" className="mt-3">
           <AllModelsTab 
-            models={models}
-            loading={loading}
+            models={allModels}
+            loading={isLoadingAll}
             featuredModels={featuredModels}
             newModels={newModels}
             topRatedModels={topRatedModels}
@@ -94,14 +73,14 @@ const BrowsePage: React.FC = () => {
             suggestedModels={suggestedModels}
             featuredModels={featuredModels}
             newModels={newModels}
-            loading={loading}
+            loading={isLoadingSuggested || isLoadingFeatured || isLoadingNew}
           />
         </TabsContent>
         
         <TabsContent value="verified" className="mt-3">
           <ModelListTab 
             models={verifiedModels}
-            loading={loading}
+            loading={isLoadingVerified}
             emptyMessage="No verified models found"
           />
         </TabsContent>
@@ -109,7 +88,7 @@ const BrowsePage: React.FC = () => {
         <TabsContent value="nearby" className="mt-3">
           <ModelListTab 
             models={nearbyModels}
-            loading={loading}
+            loading={isLoadingNearby}
             emptyMessage="No nearby models found"
           />
         </TabsContent>
@@ -117,7 +96,7 @@ const BrowsePage: React.FC = () => {
         <TabsContent value="new" className="mt-3">
           <ModelListTab 
             models={newModels}
-            loading={loading}
+            loading={isLoadingNew}
             emptyMessage="No new models found"
           />
         </TabsContent>

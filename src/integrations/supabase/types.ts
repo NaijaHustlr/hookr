@@ -9,6 +9,200 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          model_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          model_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          model_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      model_availability: {
+        Row: {
+          available: boolean
+          day: string
+          id: string
+          model_id: string | null
+        }
+        Insert: {
+          available?: boolean
+          day: string
+          id?: string
+          model_id?: string | null
+        }
+        Update: {
+          available?: boolean
+          day?: string
+          id?: string
+          model_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "model_availability_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      model_posts: {
+        Row: {
+          comments: number
+          content: string | null
+          created_at: string | null
+          id: string
+          is_premium: boolean
+          likes: number
+          media_type: string
+          media_url: string
+          model_id: string | null
+        }
+        Insert: {
+          comments?: number
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_premium?: boolean
+          likes?: number
+          media_type: string
+          media_url: string
+          model_id?: string | null
+        }
+        Update: {
+          comments?: number
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_premium?: boolean
+          likes?: number
+          media_type?: string
+          media_url?: string
+          model_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "model_posts_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      model_tags: {
+        Row: {
+          id: string
+          model_id: string | null
+          tag: string
+        }
+        Insert: {
+          id?: string
+          model_id?: string | null
+          tag: string
+        }
+        Update: {
+          id?: string
+          model_id?: string | null
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "model_tags_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      models: {
+        Row: {
+          age: number
+          created_at: string | null
+          distance: string | null
+          fallback_image_url: string | null
+          featured: boolean
+          id: string
+          name: string
+          price: number
+          profile_image_url: string | null
+          rating: number
+          review_count: number
+          updated_at: string | null
+          user_id: string | null
+          verified: boolean
+        }
+        Insert: {
+          age: number
+          created_at?: string | null
+          distance?: string | null
+          fallback_image_url?: string | null
+          featured?: boolean
+          id?: string
+          name: string
+          price: number
+          profile_image_url?: string | null
+          rating?: number
+          review_count?: number
+          updated_at?: string | null
+          user_id?: string | null
+          verified?: boolean
+        }
+        Update: {
+          age?: number
+          created_at?: string | null
+          distance?: string | null
+          fallback_image_url?: string | null
+          featured?: boolean
+          id?: string
+          name?: string
+          price?: number
+          profile_image_url?: string | null
+          rating?: number
+          review_count?: number
+          updated_at?: string | null
+          user_id?: string | null
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "models_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
