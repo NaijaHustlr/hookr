@@ -1,23 +1,28 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Home, Search, MessageSquare, User, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAuth } from "@/context/AuthContext";
 
 const NavigationBar: React.FC = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const [isCreator, setIsCreator] = useState(false);
-  const [showCreatorDialog, setShowCreatorDialog] = useState(false);
+  const [showCreatorDialog, setShowCreatorDialog] = React.useState(false);
+  
+  const { isCreator, profile } = useAuth();
   
   const handleCreateClick = () => {
     if (isCreator) {
-      // If user is already a creator, navigate to content creation
-      console.log("Navigate to content creation");
-    } else {
-      // If user is not a creator, show the dialog
+      // If user is an approved creator, navigate to content creation
+      window.location.href = "/creator-dashboard";
+    } else if (profile?.creator_status === 'pending') {
+      // If user has a pending application, show pending dialog
       setShowCreatorDialog(true);
+    } else {
+      // If user is not a creator, redirect to profile page
+      window.location.href = "/profile";
     }
   };
   
@@ -37,8 +42,12 @@ const NavigationBar: React.FC = () => {
       icon: Plus,
       path: "#", // Placeholder, handled by onClick
       onClick: handleCreateClick,
-      className: "bg-hookr-accent text-white rounded-full",
-      hide: !isCreator && location.pathname !== "/profile", // Only show if user is creator or on profile page
+      className: cn(
+        "bg-hookr-accent text-white rounded-full",
+        !isCreator && profile?.creator_status !== 'pending' && "opacity-50"
+      ),
+      // Show for creators, pending creators, or if on profile page
+      hide: !isCreator && profile?.creator_status !== 'pending' && location.pathname !== "/profile", 
     },
     {
       label: "Messages",
@@ -58,7 +67,7 @@ const NavigationBar: React.FC = () => {
         <div className="flex justify-around items-center h-16">
           {navItems.map((item) => (
             <Link
-              key={item.path}
+              key={item.label}
               to={item.onClick ? "#" : item.path}
               onClick={item.onClick}
               className={cn(
@@ -75,42 +84,30 @@ const NavigationBar: React.FC = () => {
         </div>
       </nav>
       
-      {/* Become a Creator Dialog */}
+      {/* Creator Status Dialog */}
       <Dialog open={showCreatorDialog} onOpenChange={setShowCreatorDialog}>
         <DialogContent className="bg-hookr-dark border-hookr-light border-opacity-20 text-hookr-light">
           <DialogHeader>
-            <DialogTitle className="text-hookr-light">Become a Hookr Creator</DialogTitle>
+            <DialogTitle className="text-hookr-light">Application Pending</DialogTitle>
             <DialogDescription className="text-hookr-light text-opacity-70">
-              Join our exclusive network of premium models.
+              Your creator application is currently under review.
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="bg-hookr-muted p-3 rounded-lg">
-              <h3 className="font-medium mb-2">Our Platform Standards</h3>
+              <h3 className="font-medium mb-2">What's Next?</h3>
               <ul className="list-disc pl-5 text-sm space-y-2 text-hookr-light text-opacity-80">
-                <li>Professional quality photos and videos</li>
-                <li>Verified identity and background checks</li>
-                <li>Strict adherence to platform guidelines</li>
-                <li>Reliable scheduling and communication</li>
-                <li>Consistent client satisfaction</li>
-              </ul>
-            </div>
-            
-            <div className="bg-hookr-muted p-3 rounded-lg">
-              <h3 className="font-medium mb-2">Benefits</h3>
-              <ul className="list-disc pl-5 text-sm space-y-2 text-hookr-light text-opacity-80">
-                <li>Premium visibility on the platform</li>
-                <li>Higher booking rates and income potential</li>
-                <li>Content monetization options</li>
-                <li>Priority customer support</li>
-                <li>Exclusive creator community access</li>
+                <li>Our team is reviewing your application</li>
+                <li>You'll receive a notification when approved</li>
+                <li>Most applications are processed within 48 hours</li>
+                <li>Feel free to contact support with any questions</li>
               </ul>
             </div>
             
             <div className="flex justify-end gap-3 mt-4">
-              <Link to="/profile" className="text-hookr-light">
-                Apply in Profile
+              <Link to="/profile" className="px-4 py-2 bg-hookr-accent text-white rounded-md">
+                View Status
               </Link>
             </div>
           </div>

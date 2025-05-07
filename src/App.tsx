@@ -13,6 +13,7 @@ import BrowsePage from "./pages/BrowsePage";
 import FeedPage from "./pages/FeedPage"; 
 import ProfilePage from "./pages/ProfilePage";
 import CreatorProfilePage from "./pages/CreatorProfilePage";
+import CreatorDashboard from "./pages/CreatorDashboard";
 import FavoritesPage from "./pages/FavoritesPage";
 import ChatPage from "./pages/ChatPage";
 import NotificationsPage from "./pages/NotificationsPage";
@@ -32,6 +33,25 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+  
+  return children;
+};
+
+// CreatorRoute component for creator-only pages
+const CreatorRoute = ({ children }: { children: JSX.Element }) => {
+  const { isCreator, isLoading } = useAuth();
+  
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-hookr-dark">
+        <div className="animate-spin w-8 h-8 border-4 border-hookr-accent border-t-transparent rounded-full"></div>
+      </div>
+    );
+  }
+  
+  if (!isCreator) {
+    return <Navigate to="/profile" replace />;
   }
   
   return children;
@@ -116,6 +136,14 @@ function App() {
                     <ProtectedRoute>
                       <CreatorProfilePage />
                     </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/creator-dashboard" 
+                  element={
+                    <CreatorRoute>
+                      <CreatorDashboard />
+                    </CreatorRoute>
                   } 
                 />
                 <Route 

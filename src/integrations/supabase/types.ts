@@ -40,6 +40,13 @@ export type Database = {
             foreignKeyName: "favorites_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "favorites_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -198,6 +205,13 @@ export type Database = {
             foreignKeyName: "models_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "models_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -205,27 +219,39 @@ export type Database = {
       }
       profiles: {
         Row: {
+          applied_at: string | null
+          approved_at: string | null
           avatar_url: string | null
           bio: string | null
           created_at: string | null
+          creator_status: Database["public"]["Enums"]["creator_status"]
+          gender: string | null
           id: string
           is_creator: boolean | null
           updated_at: string | null
           username: string | null
         }
         Insert: {
+          applied_at?: string | null
+          approved_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          creator_status?: Database["public"]["Enums"]["creator_status"]
+          gender?: string | null
           id: string
           is_creator?: boolean | null
           updated_at?: string | null
           username?: string | null
         }
         Update: {
+          applied_at?: string | null
+          approved_at?: string | null
           avatar_url?: string | null
           bio?: string | null
           created_at?: string | null
+          creator_status?: Database["public"]["Enums"]["creator_status"]
+          gender?: string | null
           id?: string
           is_creator?: boolean | null
           updated_at?: string | null
@@ -235,13 +261,54 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      creators: {
+        Row: {
+          applied_at: string | null
+          approved_at: string | null
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          creator_status: Database["public"]["Enums"]["creator_status"] | null
+          gender: string | null
+          id: string | null
+          is_creator: boolean | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          applied_at?: string | null
+          approved_at?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          creator_status?: Database["public"]["Enums"]["creator_status"] | null
+          gender?: string | null
+          id?: string | null
+          is_creator?: boolean | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          applied_at?: string | null
+          approved_at?: string | null
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          creator_status?: Database["public"]["Enums"]["creator_status"] | null
+          gender?: string | null
+          id?: string | null
+          is_creator?: boolean | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      creator_status: "not_applied" | "pending" | "approved" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -356,6 +423,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      creator_status: ["not_applied", "pending", "approved", "rejected"],
+    },
   },
 } as const

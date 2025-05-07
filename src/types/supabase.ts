@@ -4,9 +4,13 @@ export type Profile = {
   username: string | null;
   avatar_url: string | null;
   bio: string | null;
-  is_creator: boolean;
-  created_at: string;
-  updated_at: string;
+  is_creator: boolean | null;
+  creator_status: 'not_applied' | 'pending' | 'approved' | 'rejected';
+  gender: string | null;
+  applied_at: string | null;
+  approved_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 };
 
 export type Model = {

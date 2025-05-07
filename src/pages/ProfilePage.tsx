@@ -9,11 +9,42 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+
+const creatorFormSchema = z.object({
+  full_name: z.string().min(2, { message: "Full name must be at least 2 characters." }),
+  gender: z.string().min(1, { message: "Please select a gender" }),
+  bio: z.string().min(20, { message: "Bio must be at least 20 characters." })
+});
 
 const ProfilePage: React.FC = () => {
   const { user, profile, isLoading, signOut, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [showCreatorDialog, setShowCreatorDialog] = useState(false);
+  
+  const form = useForm<z.infer<typeof creatorFormSchema>>({
+    resolver: zodResolver(creatorFormSchema),
+    defaultValues: {
+      full_name: "",
+      gender: "",
+      bio: profile?.bio || ""
+    }
+  });
+  
+  // Update form values when profile is loaded
+  useEffect(() => {
+    if (profile) {
+      form.setValue("bio", profile.bio || "");
+      form.setValue("gender", profile.gender || "");
+    }
+  }, [profile, form]);
   
   // Redirect to auth page if not logged in
   useEffect(() => {
@@ -22,24 +53,46 @@ const ProfilePage: React.FC = () => {
     }
   }, [user, isLoading, navigate]);
   
+  // Helper function to get status badge color
+  const getStatusBadge = () => {
+    if (!profile) return null;
+    
+    switch(profile.creator_status) {
+      case 'approved':
+        return <Badge className="bg-green-600">Approved</Badge>;
+      case 'pending':
+        return <Badge className="bg-yellow-600">Under Review</Badge>;
+      case 'rejected':
+        return <Badge className="bg-red-600">Rejected</Badge>;
+      default:
+        return null;
+    }
+  };
+  
   const handleBecomeCreator = () => {
     setShowCreatorDialog(true);
   };
   
-  const handleApplySubmit = async () => {
+  const onSubmitCreatorForm = async (data: z.infer<typeof creatorFormSchema>) => {
     if (!user) return;
     
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ is_creator: true })
+        .update({ 
+          creator_status: 'pending',
+          gender: data.gender, 
+          bio: data.bio,
+          username: data.full_name,
+          applied_at: new Date().toISOString(),
+        })
         .eq('id', user.id);
         
       if (error) throw error;
       
       await refreshProfile();
       setShowCreatorDialog(false);
-      toast.success("You are now a creator!");
+      toast.success("Your creator application has been submitted for review!");
     } catch (error: any) {
       console.error('Error updating profile:', error);
       toast.error("There was an error processing your request.");
@@ -80,14 +133,18 @@ const ProfilePage: React.FC = () => {
           </Avatar>
           <div>
             <h2 className="text-xl font-serif-custom font-bold text-hookr-light">{profile?.username || user?.email}</h2>
-            <p className="text-hookr-light text-opacity-70">
-              {profile?.is_creator ? "Creator" : "Premium Member"}
-            </p>
+            <div className="flex gap-2 items-center">
+              <p className="text-hookr-light text-opacity-70">
+                {profile?.creator_status === 'approved' ? "Creator" : "Premium Member"}
+              </p>
+              {getStatusBadge()}
+            </div>
             <div className="mt-2 flex gap-2">
               <Button variant="outline" size="sm" className="bg-hookr-muted border-hookr-light border-opacity-20 text-hookr-light">
                 Edit Profile
               </Button>
-              {!profile?.is_creator && (
+              
+              {profile?.creator_status === 'not_applied' && (
                 <Button 
                   variant="outline" 
                   size="sm" 
@@ -97,13 +154,26 @@ const ProfilePage: React.FC = () => {
                   Become a Hookr
                 </Button>
               )}
-              {profile?.is_creator && (
+              
+              {profile?.creator_status === 'pending' && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="bg-hookr-muted border-yellow-500 text-yellow-500"
+                  disabled
+                >
+                  Application Pending
+                </Button>
+              )}
+              
+              {profile?.creator_status === 'approved' && (
                 <Button 
                   variant="outline" 
                   size="sm" 
                   className="bg-hookr-accent text-white border-hookr-accent"
+                  onClick={() => navigate('/creator-dashboard')}
                 >
-                  Creator Account
+                  Creator Dashboard
                 </Button>
               )}
             </div>
@@ -158,44 +228,111 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
       
-      {/* Become a Creator Dialog */}
+      {/* Become a Creator Dialog with Form */}
       <Dialog open={showCreatorDialog} onOpenChange={setShowCreatorDialog}>
-        <DialogContent className="bg-hookr-dark border-hookr-light border-opacity-20 text-hookr-light">
+        <DialogContent className="bg-hookr-dark border-hookr-light border-opacity-20 text-hookr-light max-w-md">
           <DialogHeader>
             <DialogTitle className="text-hookr-light">Become a Hookr Creator</DialogTitle>
             <DialogDescription className="text-hookr-light text-opacity-70">
-              Join our exclusive network of premium models.
+              Complete this form to apply as a creator on our platform.
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4">
-            <div className="bg-hookr-muted p-3 rounded-lg">
-              <h3 className="font-medium mb-2">Our Platform Standards</h3>
-              <ul className="list-disc pl-5 text-sm space-y-2 text-hookr-light text-opacity-80">
-                <li>Professional quality photos and videos</li>
-                <li>Verified identity and background checks</li>
-                <li>Strict adherence to platform guidelines</li>
-                <li>Reliable scheduling and communication</li>
-                <li>Consistent client satisfaction</li>
-              </ul>
-            </div>
-            
-            <div className="bg-hookr-muted p-3 rounded-lg">
-              <h3 className="font-medium mb-2">Benefits</h3>
-              <ul className="list-disc pl-5 text-sm space-y-2 text-hookr-light text-opacity-80">
-                <li>Premium visibility on the platform</li>
-                <li>Higher booking rates and income potential</li>
-                <li>Content monetization options</li>
-                <li>Priority customer support</li>
-                <li>Exclusive creator community access</li>
-              </ul>
-            </div>
-            
-            <div className="flex justify-end gap-3 mt-4">
-              <Button variant="ghost" onClick={() => setShowCreatorDialog(false)}>Cancel</Button>
-              <Button className="bg-hookr-accent text-white" onClick={handleApplySubmit}>Apply Now</Button>
-            </div>
-          </div>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmitCreatorForm)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="full_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-hookr-light">Full Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Your full name" 
+                        {...field} 
+                        className="bg-hookr-muted text-hookr-light border-hookr-light border-opacity-20" 
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-hookr-light">Gender</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="bg-hookr-muted text-hookr-light border-hookr-light border-opacity-20">
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-hookr-dark text-hookr-light">
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-hookr-light">Bio</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Tell us about yourself..." 
+                        {...field} 
+                        className="bg-hookr-muted text-hookr-light border-hookr-light border-opacity-20 min-h-[100px]" 
+                      />
+                    </FormControl>
+                    <FormDescription className="text-hookr-light text-opacity-50">
+                      Describe your experience, specialties and what makes you unique.
+                    </FormDescription>
+                  </FormItem>
+                )}
+              />
+              
+              <div className="pt-4 bg-hookr-muted rounded-lg p-3">
+                <h3 className="font-medium mb-2">Platform Standards</h3>
+                <ul className="list-disc pl-5 text-sm space-y-2 text-hookr-light text-opacity-80">
+                  <li>Professional quality photos and videos</li>
+                  <li>Verified identity and background checks</li>
+                  <li>Strict adherence to platform guidelines</li>
+                  <li>Reliable scheduling and communication</li>
+                </ul>
+              </div>
+              
+              <div className="flex justify-end gap-3 mt-6">
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  onClick={() => setShowCreatorDialog(false)}
+                  className="text-hookr-light"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="bg-hookr-accent text-white"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? (
+                    <span className="flex items-center">
+                      <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                      Submitting...
+                    </span>
+                  ) : "Apply Now"}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>
