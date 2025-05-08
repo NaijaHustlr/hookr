@@ -81,14 +81,14 @@ export const fetchModels = async (options: FetchModelsOptions = {}): Promise<Mod
           modelId: profile.id,
           content: post.caption || '',
           mediaUrl: post.media_url,
-          mediaType: post.media_type,
-          likes: post.likes_count,
-          comments: post.comments_count,
+          mediaType: post.media_type as 'image' | 'video', // Ensure correct type casting
+          likes: post.likes_count || 0,
+          comments: post.comments_count || 0,
           timestamp: new Date(post.created_at),
-          isPremium: post.is_premium
+          isPremium: post.is_premium || false
         }))
       };
-    });
+    }) as ModelType[]; // Type assertion to ensure compatibility
   } catch (error) {
     console.error("Error in fetchModels:", error);
     return [];

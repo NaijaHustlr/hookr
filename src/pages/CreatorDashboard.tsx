@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { ArrowLeft, Eye, Cog, BarChart3 } from "lucide-react";
+import { ArrowLeft, Eye, Cog, BarChart3, Upload } from "lucide-react"; // Add missing Upload import
 import PostUploader from "@/components/creator/PostUploader";
 import { useCreatorPosts } from "@/hooks/usePosts";
 import PostGrid from "@/components/creator/PostGrid";

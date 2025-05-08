@@ -1,3 +1,4 @@
+
 export type Profile = {
   id: string;
   username: string | null;
@@ -66,6 +67,10 @@ export type Post = {
   is_premium: boolean;
   created_at: string;
   updated_at: string;
+  profiles?: {
+    username: string | null;
+    avatar_url: string | null;
+  };
 };
 
 export type Favorite = {

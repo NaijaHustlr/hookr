@@ -52,6 +52,7 @@ const FeedPage: React.FC = () => {
     queryKey: ['feed-posts'],
     queryFn: fetchPosts,
     getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: 0 // Add the missing initialPageParam property
   });
 
   // Show error if present
