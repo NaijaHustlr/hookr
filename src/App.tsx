@@ -1,198 +1,55 @@
-
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { AuthProvider, useAuth } from "./context/AuthContext";
-import AppLayout from "./components/layout/AppLayout";
-import SplashScreen from "./pages/SplashScreen";
-import AuthPage from "./pages/AuthPage";
-import BrowsePage from "./pages/BrowsePage";
-import FeedPage from "./pages/FeedPage"; 
-import ProfilePage from "./pages/ProfilePage";
-import CreatorProfilePage from "./pages/CreatorProfilePage";
-import CreatorDashboard from "./pages/CreatorDashboard";
-import FavoritesPage from "./pages/FavoritesPage";
-import ChatPage from "./pages/ChatPage";
-import NotificationsPage from "./pages/NotificationsPage";
-import PostPage from "./pages/PostPage";
-import NotFound from "./pages/NotFound";
+import { Toaster } from "sonner";
 
-// ProtectedRoute component for auth-required pages
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { user, isLoading } = useAuth();
-  
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-hookr-dark">
-        <div className="animate-spin w-8 h-8 border-4 border-hookr-accent border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
-  
-  if (!user) {
-    return <Navigate to="/auth" replace />;
-  }
-  
-  return children;
-};
+import { AuthProvider } from "@/context/AuthContext";
+import AppLayout from "@/layouts/AppLayout";
+import Index from "@/pages/IndexPage";
+import AuthPage from "@/pages/AuthPage";
+import BrowsePage from "@/pages/BrowsePage";
+import ExplorePage from "@/pages/ExplorePage";
+import FeedPage from "@/pages/FeedPage";
+import FavoritesPage from "@/pages/FavoritesPage";
+import ChatPage from "@/pages/ChatPage";
+import NotificationsPage from "@/pages/NotificationsPage";
+import ProfilePage from "@/pages/ProfilePage";
+import CreatorProfilePage from "@/pages/CreatorProfilePage";
+import CreatorDashboard from "@/pages/CreatorDashboard";
+import PostPage from "@/pages/PostPage";
+import NotFound from "@/pages/NotFoundPage";
+import AdminDashboardPage from "@/pages/AdminDashboardPage";
 
-// CreatorRoute component for creator-only pages
-const CreatorRoute = ({ children }: { children: JSX.Element }) => {
-  const { isCreator, isLoading } = useAuth();
-  
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-hookr-dark">
-        <div className="animate-spin w-8 h-8 border-4 border-hookr-accent border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
-  
-  if (!isCreator) {
-    return <Navigate to="/profile" replace />;
-  }
-  
-  return children;
-};
+const queryClient = new QueryClient();
 
-function App() {
-  // Create a new QueryClient on component render
-  const [queryClient] = useState(() => new QueryClient());
-  const [hasVisitedBefore, setHasVisitedBefore] = useState<boolean | null>(null);
-
-  // Check if user has visited before
-  useEffect(() => {
-    const visited = localStorage.getItem('hasVisitedBefore');
-    setHasVisitedBefore(!!visited);
-    
-    if (!visited) {
-      localStorage.setItem('hasVisitedBefore', 'true');
-    }
-  }, []);
-
-  // Show loading state until we know if user has visited before
-  if (hasVisitedBefore === null) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-hookr-dark">
-        <div className="animate-spin w-8 h-8 border-4 border-hookr-accent border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
-
+const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Splash and Auth Routes (No Navigation) */}
-              <Route 
-                path="/splash" 
-                element={hasVisitedBefore ? <Navigate to="/" replace /> : <SplashScreen />} 
-              />
-              <Route path="/auth" element={<AuthPage />} />
-              
-              {/* Main App Routes (With Navigation) */}
-              <Route element={<AppLayout />}>
-                <Route 
-                  path="/" 
-                  element={
-                    <ProtectedRoute>
-                      <BrowsePage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/feed" 
-                  element={
-                    <ProtectedRoute>
-                      <FeedPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/favorites" 
-                  element={
-                    <ProtectedRoute>
-                      <FavoritesPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile" 
-                  element={
-                    <ProtectedRoute>
-                      <ProfilePage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/profile/:id" 
-                  element={
-                    <ProtectedRoute>
-                      <CreatorProfilePage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/creator-dashboard" 
-                  element={
-                    <CreatorRoute>
-                      <CreatorDashboard />
-                    </CreatorRoute>
-                  } 
-                />
-                <Route 
-                  path="/post/:id" 
-                  element={
-                    <ProtectedRoute>
-                      <PostPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/chat" 
-                  element={
-                    <ProtectedRoute>
-                      <ChatPage />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/notifications" 
-                  element={
-                    <ProtectedRoute>
-                      <NotificationsPage />
-                    </ProtectedRoute>
-                  } 
-                />
-              </Route>
-              
-              {/* Redirect logic for first-time visitors */}
-              <Route 
-                path="/" 
-                element={
-                  hasVisitedBefore ? (
-                    <Navigate to="/auth" replace />
-                  ) : (
-                    <Navigate to="/splash" replace />
-                  )
-                } 
-              />
-              
-              {/* Not Found */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<AuthPage />} />
+            <Route element={<AppLayout />}>
+              <Route path="/browse" element={<BrowsePage />} />
+              <Route path="/explore" element={<ExplorePage />} />
+              <Route path="/feed" element={<FeedPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/notifications" element={<NotificationsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/profile/:id" element={<CreatorProfilePage />} />
+              <Route path="/creator-dashboard" element={<CreatorDashboard />} />
+              <Route path="/post/:id" element={<PostPage />} />
+              <Route path="/admin" element={<AdminDashboardPage />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Router>
+        <Toaster />
+      </QueryClientProvider>
+    </AuthProvider>
   );
-}
+};
 
 export default App;
