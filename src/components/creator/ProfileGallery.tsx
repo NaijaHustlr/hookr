@@ -5,6 +5,7 @@ import { Heart, MessageSquare, Save, Lock, Play } from "lucide-react";
 import { Post } from "@/types/model";
 import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface ProfileGalleryProps {
   posts: Post[];
@@ -106,7 +107,7 @@ const ProfileGallery: React.FC<ProfileGalleryProps> = ({
             key={post.id} 
             className={`bg-hookr-muted border-hookr-muted overflow-hidden relative ${post.isPremium && !isSubscribed ? "opacity-60" : ""}`}
           >
-            <div className="relative aspect-square">
+            <Link to={`/post/${post.id}`} className="block relative aspect-square">
               <img 
                 src={post.mediaUrl} 
                 alt={post.content} 
@@ -120,12 +121,15 @@ const ProfileGallery: React.FC<ProfileGalleryProps> = ({
               {post.mediaType === 'video' && (
                 <button 
                   className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
-                  onClick={() => handleWatchVideo(post)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleWatchVideo(post);
+                  }}
                 >
                   <Play className="h-10 w-10 text-white" />
                 </button>
               )}
-            </div>
+            </Link>
             <CardContent className="p-3">
               <p className="text-xs text-hookr-light truncate mb-2">
                 {post.content}

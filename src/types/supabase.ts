@@ -1,4 +1,3 @@
-
 export type Profile = {
   id: string;
   username: string | null;
@@ -53,6 +52,20 @@ export type ModelPost = {
   comments: number;
   is_premium: boolean;
   created_at: string;
+};
+
+export type Post = {
+  id: string;
+  creator_id: string;
+  media_url: string;
+  media_type: 'image' | 'video';
+  caption: string | null;
+  tags: string[] | null;
+  likes_count: number;
+  comments_count: number;
+  is_premium: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Favorite = {

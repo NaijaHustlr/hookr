@@ -17,6 +17,7 @@ import CreatorDashboard from "./pages/CreatorDashboard";
 import FavoritesPage from "./pages/FavoritesPage";
 import ChatPage from "./pages/ChatPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import PostPage from "./pages/PostPage";
 import NotFound from "./pages/NotFound";
 
 // ProtectedRoute component for auth-required pages
@@ -144,6 +145,14 @@ function App() {
                     <CreatorRoute>
                       <CreatorDashboard />
                     </CreatorRoute>
+                  } 
+                />
+                <Route 
+                  path="/post/:id" 
+                  element={
+                    <ProtectedRoute>
+                      <PostPage />
+                    </ProtectedRoute>
                   } 
                 />
                 <Route 

@@ -5,17 +5,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { filterOptions } from "@/services/mockData";
 import { ModelType } from "@/types/model";
 
-// Import our components and new hooks
+// Import our components and hooks
 import BrowseHeader from "@/components/browse/BrowseHeader";
 import AllModelsTab from "@/components/browse/tabs/AllModelsTab";
 import DiscoverTab from "@/components/browse/tabs/DiscoverTab";
 import ModelListTab from "@/components/browse/tabs/ModelListTab";
-import { useModels, useFeaturedModels, useNewModels, useTopRatedModels, useVerifiedModels, useNearbyModels } from "@/hooks/useModels";
+import { 
+  useModels, 
+  useFeaturedModels, 
+  useNewModels, 
+  useTopRatedModels, 
+  useVerifiedModels, 
+  useNearbyModels 
+} from "@/hooks/useModels";
 
 const BrowsePage: React.FC = () => {
   const [appliedFilters, setAppliedFilters] = useState<Record<string, string>>({});
   
-  // Use our new hooks to fetch real data
+  // Use our hooks to fetch real data
   const { data: allModels = [], isLoading: isLoadingAll } = useModels();
   const { data: verifiedModels = [], isLoading: isLoadingVerified } = useVerifiedModels();
   const { data: nearbyModels = [], isLoading: isLoadingNearby } = useNearbyModels();

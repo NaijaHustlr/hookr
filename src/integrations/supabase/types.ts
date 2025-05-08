@@ -217,6 +217,63 @@ export type Database = {
           },
         ]
       }
+      posts: {
+        Row: {
+          caption: string | null
+          comments_count: number | null
+          created_at: string | null
+          creator_id: string
+          id: string
+          is_premium: boolean | null
+          likes_count: number | null
+          media_type: string
+          media_url: string
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          caption?: string | null
+          comments_count?: number | null
+          created_at?: string | null
+          creator_id: string
+          id?: string
+          is_premium?: boolean | null
+          likes_count?: number | null
+          media_type: string
+          media_url: string
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          caption?: string | null
+          comments_count?: number | null
+          created_at?: string | null
+          creator_id?: string
+          id?: string
+          is_premium?: boolean | null
+          likes_count?: number | null
+          media_type?: string
+          media_url?: string
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "posts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "creators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "posts_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           applied_at: string | null

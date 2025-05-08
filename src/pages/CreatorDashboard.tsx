@@ -5,12 +5,18 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { ArrowLeft, Upload, Eye, Cog, BarChart3 } from "lucide-react";
+import { ArrowLeft, Eye, Cog, BarChart3 } from "lucide-react";
+import PostUploader from "@/components/creator/PostUploader";
+import { useCreatorPosts } from "@/hooks/usePosts";
+import PostGrid from "@/components/creator/PostGrid";
 
 const CreatorDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { profile, isCreator } = useAuth();
+  const { profile, isCreator, user } = useAuth();
+  
+  // Fetch creator's posts
+  const { data: posts = [], isLoading: isLoadingPosts } = useCreatorPosts(user?.id);
   
   // Redirect if not an approved creator
   React.useEffect(() => {
@@ -61,10 +67,7 @@ const CreatorDashboard: React.FC = () => {
         <div className="grid grid-cols-2 gap-4 mb-8">
           <Button 
             className="bg-hookr-accent text-white h-auto py-6 flex flex-col items-center gap-2"
-            onClick={() => toast({
-              title: "Coming Soon",
-              description: "This feature will be available soon!"
-            })}
+            onClick={() => document.getElementById('creator-dashboard-tabs')?.setAttribute('value', 'content')}
           >
             <Upload className="h-6 w-6" />
             <span>Upload Content</span>
@@ -83,7 +86,7 @@ const CreatorDashboard: React.FC = () => {
       
       {/* Content Tabs */}
       <div className="px-4 flex-1">
-        <Tabs defaultValue="content" className="w-full">
+        <Tabs defaultValue="content" id="creator-dashboard-tabs" className="w-full">
           <TabsList className="grid grid-cols-3 bg-hookr-muted w-full">
             <TabsTrigger value="content" className="text-hookr-light">Content</TabsTrigger>
             <TabsTrigger value="analytics" className="text-hookr-light">Analytics</TabsTrigger>
@@ -91,21 +94,31 @@ const CreatorDashboard: React.FC = () => {
           </TabsList>
           
           <TabsContent value="content" className="mt-4">
-            <div className="bg-hookr-muted p-6 rounded-lg text-center py-10">
-              <BarChart3 className="h-12 w-12 text-hookr-light/50 mx-auto mb-4" />
-              <h3 className="text-hookr-light font-medium text-lg">No Content Yet</h3>
-              <p className="text-hookr-light/70 mt-2 mb-6">
-                Upload photos and videos to start growing your audience
-              </p>
-              <Button 
-                className="bg-hookr-accent text-white"
-                onClick={() => toast({
-                  title: "Coming Soon",
-                  description: "Upload functionality will be available soon!"
-                })}
-              >
-                Upload New Post
-              </Button>
+            {/* Upload Form */}
+            <div className="mb-8">
+              <h3 className="text-hookr-light text-lg mb-4">Upload New Content</h3>
+              <PostUploader />
+            </div>
+            
+            {/* Posts Grid */}
+            <div className="mt-8">
+              <h3 className="text-hookr-light text-lg mb-4">Your Content</h3>
+              {isLoadingPosts ? (
+                <div className="bg-hookr-muted p-6 rounded-lg text-center py-10">
+                  <div className="animate-spin text-hookr-accent mb-2">◌</div>
+                  <p className="text-hookr-light/70">Loading your content...</p>
+                </div>
+              ) : posts.length > 0 ? (
+                <PostGrid posts={posts} />
+              ) : (
+                <div className="bg-hookr-muted p-6 rounded-lg text-center py-10">
+                  <BarChart3 className="h-12 w-12 text-hookr-light/50 mx-auto mb-4" />
+                  <h3 className="text-hookr-light font-medium text-lg">No Content Yet</h3>
+                  <p className="text-hookr-light/70 mt-2 mb-6">
+                    Upload photos and videos to start growing your audience
+                  </p>
+                </div>
+              )}
             </div>
           </TabsContent>
           
